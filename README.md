@@ -1,6 +1,6 @@
 # Gost IP6 Script
 
-[English](README.md) | [فارسی](README-fa.md)
+[English](README.md) | [فارسی](README-Fa.md)
 
 ## Overview
 
