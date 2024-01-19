@@ -1,5 +1,7 @@
 # Gost IP6 Script
 
+[English](README.md) | [فارسی](README-fa.md)
+
 ## Overview
 
 Gost IP6 Script is a Bash script designed to simplify the setup of Gost tunnels for both IPv4 and IPv6. This script provides an easy-to-use interface for configuring Gost with various options, allowing users to create secure tunnels for their network needs.
