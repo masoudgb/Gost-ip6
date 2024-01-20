@@ -94,7 +94,6 @@ EOL
 
     # Continue creating the systemd service file
     cat <<EOL | sudo tee -a /usr/lib/systemd/system/gost.service > /dev/null
-Restart=always
 
 [Install]
 WantedBy=multi-user.target
