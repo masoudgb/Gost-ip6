@@ -49,12 +49,12 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
         exit
     fi
 
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[32m1. \e[0mBy Tcp Protocol \n\e[32m2. \e[0mBy Grcp Protocol \e[32m\nYour choice: \e[0m' protocol_option
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[32m1. \e[0mBy Tcp Protocol \n\e[32m2. \e[0mBy Grpc Protocol \e[32m\nYour choice: \e[0m' protocol_option
 
     if [ "$protocol_option" -eq 1 ]; then
         protocol="tcp"
     elif [ "$protocol_option" -eq 2 ]; then
-        protocol="grcp"
+        protocol="grpc"
     else
         echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
         exit
