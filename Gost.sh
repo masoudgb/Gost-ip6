@@ -10,7 +10,7 @@ fi
 apt update
 
 # Options with green color
-echo $'\e[35m'"✩░▒▓▆▅▃▂▁𝐆𝐨𝐬𝐭 𝐢𝐩𝟔▁▂▃▅▆▓▒░✩ "$'\e[0m'
+echo $'\e[35m'"✩░▒▓▆▅▃▂▁𝐆𝐨𝐬𝐭 𝐢𝐩𝟔▁▂▃▅▆▓▒░✩"$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
 echo $'\e[35m'"Gost Ip6 Script v0.1"$'\e[0m'
