@@ -31,9 +31,9 @@ read -p $'\e[97mYour choice: \e[0m' choice
 if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
 
     if [ "$choice" -eq 1 ]; then
-        read -p $'\e[97mPlease enter the destination IP: \e[0m' destination_ip
+        read -p $'\e[97mPlease enter the destination (Kharej) IP: \e[0m' destination_ip
     elif [ "$choice" -eq 2 ]; then
-        read -p $'\e[97mPlease enter the destination IPv6: \e[0m' destination_ip
+        read -p $'\e[97mPlease enter the destination (Kharej) IPv6: \e[0m' destination_ip
     fi
 
     read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[32m1. \e[0mEnter Manually Ports\n\e[32m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' port_option
