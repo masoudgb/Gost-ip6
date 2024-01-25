@@ -29,6 +29,12 @@ Gost IP6 Script is a Bash script designed to simplify the setup of Gost tunnels 
 
 4. The script will install and configure Gost based on your selections.
 
+## Project Tutorial
+
+[![YouTube Tutorial](https://img.youtube.com/vi/AHzhI7TUJSI/0.jpg)](https://youtu.be/AHzhI7TUJSI)
+
+Support the Video creator: [Telegram Channel](https://t.me/+2S96GjBZJ1cxYzVk)
+
 ## Uninstallation
 
 To uninstall Gost, choose the uninstall option, and the script will remove Gost along with its systemd service.
