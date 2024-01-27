@@ -45,4 +45,4 @@ Created by Masoud Gb with special thanks to Mr.HamidRouter.
 
 ## Version
 
-Gost IP6 Script v0.1
+Gost IP6 Script v0.3
