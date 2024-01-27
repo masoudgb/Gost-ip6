@@ -7,13 +7,15 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Update the system
-apt update
+echo $'\e[32mUpdating system packages, please wait...\e[0m'
+apt update 
+echo $'\e[32mSystem update completed.\e[0m'
 
 # Options with green color
 echo $'\e[35m'"✩░▒▓▆▅▃▂▁𝐆𝐨𝐬𝐭 𝐢𝐩𝟔▁▂▃▅▆▓▒░✩"$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v0.1"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v0.3"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -43,7 +45,7 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
     elif [ "$port_option" -eq 2 ]; then
         read -p $'\e[97mPlease enter the port range (e.g., 1,65535): \e[0m' port_range
         IFS=',' read -ra port_array <<< "$port_range"
-        ports=$(seq -s, "${port_array[0]}" "${port_array[1]}")
+        ports=$(IFS=,; echo "${port_array[*]}")
     else
         echo $'\e[31mInvalid option. Exiting...\e[0m'
         exit
@@ -66,8 +68,14 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
     echo $'\e[97mProtocol:\e[0m' $protocol
 
     # Commands to install and configure Gost
-    sudo apt install wget nano -y && wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && gunzip gost-linux-amd64-2.11.5.gz
-    sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && sudo chmod +x /usr/local/bin/gost
+    sudo apt install wget nano -y && \
+echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
+wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
+echo $'\e[32mGost downloaded successfully.\e[0m' && \
+gunzip gost-linux-amd64-2.11.5.gz && \
+sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
+sudo chmod +x /usr/local/bin/gost && \
+echo $'\e[32mGost installed successfully.\e[0m'
 
     # Create systemd service file without displaying content
     cat <<EOL | sudo tee /usr/lib/systemd/system/gost.service > /dev/null
@@ -89,10 +97,48 @@ EOL
         exec_start_command+=" -L=$protocol://:$port/[$destination_ip]:$port"
     done
 
-    # Add the ExecStart command to the systemd service file
-    echo "$exec_start_command" | sudo tee -a /usr/lib/systemd/system/gost.service > /dev/null
+    # Add the loop for adding additional IPs
+    while true; do
+        read -p $'\e[36mDo you want to add another destination IP? (y/n): \e[0m' add_another_ip
+        if [ "$add_another_ip" == "n" ]; then
+            break
+        elif [ "$add_another_ip" == "y" ]; then
+            read -p $'\e[97mPlease enter the new destination (Kharej) IP: \e[0m' new_destination_ip
+
+            # Use the same protocol as the first choice by default
+            new_protocol=$protocol
+
+            read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[32m1. \e[0mEnter Manually Ports\n\e[32m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' new_port_option
+
+            if [ "$new_port_option" -eq 1 ]; then
+                read -p $'\e[97mPlease enter the desired ports (separated by commas): \e[0m' new_ports
+            elif [ "$new_port_option" -eq 2 ]; then
+                read -p $'\e[97mPlease enter the port range (e.g., 1,65535): \e[0m' new_port_range
+                IFS=',' read -ra new_port_array <<< "$new_port_range"
+                new_ports=$(IFS=,; echo "${new_port_array[*]}")
+            else
+                echo $'\e[31mInvalid option. Exiting...\e[0m'
+                exit
+            fi
+
+            echo $'\e[97mNew Destination IP:\e[0m' $new_destination_ip
+            echo $'\e[97mNew Ports:\e[0m' $new_ports
+            echo $'\e[97mNew Protocol:\e[0m' $new_protocol
+
+            # Add lines for each port of the new destination IPs
+            IFS=',' read -ra new_port_array <<< "$new_ports"
+            for new_port in "${new_port_array[@]}"; do
+                exec_start_command+=" -L=$new_protocol://:$new_port/[$new_destination_ip]:$new_port"
+            done
+        else
+            echo $'\e[31mInvalid option. Exiting...\e[0m'
+            exit
+        fi
+    done
 
     # Continue creating the systemd service file
+    echo "$exec_start_command" | sudo tee -a /usr/lib/systemd/system/gost.service > /dev/null
+
     cat <<EOL | sudo tee -a /usr/lib/systemd/system/gost.service > /dev/null
 
 [Install]
