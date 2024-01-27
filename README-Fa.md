@@ -37,4 +37,4 @@
 ساخته شده توسط MasoudGB با تشکر ویژه از Mr.HamidRouter.
 
 نسخه
-اسکریپت Gost IP6 v0.1
+اسکریپت Gost IP6 v0.3
