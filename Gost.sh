@@ -12,7 +12,7 @@ apt update
 echo $'\e[32mSystem update completed.\e[0m'
 
 # Options with green color
-echo $'\e[35m'"░░░░░░    ░░░░░░  ░░░░░░░ ░░░░░░░░     ░░ ░░░░░░  ░░░░░░  
+echo $'\e[35m'"░░░░░░   ░░░░░░  ░░░░░░░ ░░░░░░░░     ░░ ░░░░░░   ░░░░░░  
 ▒▒       ▒▒    ▒▒ ▒▒         ▒▒        ▒▒ ▒▒   ▒▒ ▒▒       
 ▒▒   ▒▒▒ ▒▒    ▒▒ ▒▒▒▒▒▒▒    ▒▒        ▒▒ ▒▒▒▒▒▒  ▒▒▒▒▒▒▒  
 ▓▓    ▓▓ ▓▓    ▓▓      ▓▓    ▓▓        ▓▓ ▓▓      ▓▓    ▓▓ 
@@ -48,8 +48,11 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
         read -p $'\e[97mPlease enter the desired ports (separated by commas): \e[0m' ports
     elif [ "$port_option" -eq 2 ]; then
         read -p $'\e[97mPlease enter the port range (e.g., 1,65535): \e[0m' port_range
-        IFS=',' read -ra port_array <<< "$port_range"
-        ports=$(IFS=,; echo "${port_array[*]}")
+
+IFS=',' read -ra port_array <<< "$port_range"
+
+ports=$(seq -s, "${port_array[0]}" "${port_array[1]}")
+
     else
         echo $'\e[31mInvalid option. Exiting...\e[0m'
         exit
@@ -138,9 +141,12 @@ EOL
             if [ "$new_port_option" -eq 1 ]; then
                 read -p $'\e[97mPlease enter the desired ports (separated by commas): \e[0m' new_ports
             elif [ "$new_port_option" -eq 2 ]; then
-                read -p $'\e[97mPlease enter the port range (e.g., 1,65535): \e[0m' new_port_range
-                IFS=',' read -ra new_port_array <<< "$new_port_range"
-                new_ports=$(IFS=,; echo "${new_port_array[*]}")
+                read -p $'\e[32mPlease enter the port range for the new destination (e.g., 1,65535): \e[0m' new_port_range
+
+IFS=',' read -ra new_port_array <<< "$new_port_range"
+
+new_ports=$(seq -s, "${new_port_array[0]}" "${new_port_array[1]}")
+
             else
                 echo $'\e[31mInvalid option. Exiting...\e[0m'
                 exit
