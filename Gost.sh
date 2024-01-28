@@ -12,11 +12,11 @@ apt update
 echo $'\e[32mSystem update completed.\e[0m'
 
 # Options with green color
-echo $'\e[35m'"  ___|              |        _ _|         /    
- |      _ \    __|  __|        |  __ \    _ \  
- |   | (   | \__ \  |          |  |   |  (   | 
-\____|\___/  ____/ \__|      ___| .__/  \___/  
-                                 _|            "$'\e[0m'
+echo $'\e[35m'"   ░░░░░░   ░░░░░░  ░░░░░░░ ░░░░░░░░     ░░ ░░░░░░   ░░░░░░  
+▒▒       ▒▒    ▒▒ ▒▒         ▒▒        ▒▒ ▒▒   ▒▒ ▒▒       
+▒▒   ▒▒▒ ▒▒    ▒▒ ▒▒▒▒▒▒▒    ▒▒        ▒▒ ▒▒▒▒▒▒  ▒▒▒▒▒▒▒  
+▓▓    ▓▓ ▓▓    ▓▓      ▓▓    ▓▓        ▓▓ ▓▓      ▓▓    ▓▓ 
+ ██████   ██████  ███████    ██        ██ ██       ██████              "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
 echo $'\e[35m'"Gost Ip6 Script v0.6"$'\e[0m'
