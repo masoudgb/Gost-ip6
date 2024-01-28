@@ -19,7 +19,7 @@ echo $'\e[35m'"  ___|              |        _ _|         /
                                  _|            "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v0.3"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v0.6"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -73,14 +73,35 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
 
     # Commands to install and configure Gost
     sudo apt install wget nano -y && \
-echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
-wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
-echo $'\e[32mGost downloaded successfully.\e[0m' && \
-gunzip gost-linux-amd64-2.11.5.gz && \
-sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
-sudo chmod +x /usr/local/bin/gost && \
-echo $'\e[32mGost installed successfully.\e[0m'
+# Prompt user to choose Gost version
+echo $'\e[32mChoose Gost version:\e[0m'
+echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
+echo $'\e[36m2. \e[0mGost version 3.0.0 (latest)'
 
+# Read user input for Gost version
+read -p $'\e[97mYour choice: \e[0m' gost_version_choice
+
+# Download and install Gost based on user's choice
+if [ "$gost_version_choice" -eq 1 ]; then
+    echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
+    wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
+    echo $'\e[32mGost downloaded successfully.\e[0m' && \
+    gunzip gost-linux-amd64-2.11.5.gz && \
+    sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
+    sudo chmod +x /usr/local/bin/gost && \
+    echo $'\e[32mGost installed successfully.\e[0m'
+elif [ "$gost_version_choice" -eq 2 ]; then
+    echo $'\e[32mInstalling Gost version 3.0.0, please wait...\e[0m' && \
+    wget https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20240128/gost_3.0.0-nightly.20240128_linux_amd64.tar.gz && \
+    echo $'\e[32mGost downloaded successfully.\e[0m' && \
+    tar -xvzf gost_3.0.0-nightly.20240128_linux_amd64.tar.gz -C /usr/local/bin/ && \
+    cd /usr/local/bin/ && \
+    chmod +x gost && \
+    echo $'\e[32mGost installed successfully.\e[0m'
+else
+    echo $'\e[31mInvalid choice. Exiting...\e[0m'
+    exit
+fi
     # Create systemd service file without displaying content
     cat <<EOL | sudo tee /usr/lib/systemd/system/gost.service > /dev/null
 [Unit]
