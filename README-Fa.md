@@ -11,7 +11,8 @@
 - گزینه حذف برای حذف آسان.
 
 ## نصب
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/1ffe977e-01e1-4f88-9ab8-42dd5e86c825)
+
+![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/d54404b2-4124-4ddd-ad67-f1d8b19a8c39)
 
 
 
