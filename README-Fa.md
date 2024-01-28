@@ -11,8 +11,9 @@
 - گزینه حذف برای حذف آسان.
 
 ## نصب
+![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/1ffe977e-01e1-4f88-9ab8-42dd5e86c825)
 
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/176704ed-5547-4576-91e6-380729a0c1ad)
+
 
 
 1. مطمئن شوید که دسترسی root را قبل از اجرای اسکریپت دارید.
