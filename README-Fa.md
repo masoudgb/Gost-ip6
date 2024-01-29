@@ -12,7 +12,8 @@
 
 ## نصب
 
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/d54404b2-4124-4ddd-ad67-f1d8b19a8c39)
+![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/54ca010b-cc39-4edb-be8a-6d42b2300d9f)
+
 
 
 
