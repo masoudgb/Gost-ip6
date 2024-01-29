@@ -15,7 +15,8 @@ Gost IP6 Script is a Bash script designed to simplify the setup of Gost tunnels 
 
 ## Installation 
 
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/2600df9e-da82-4e5a-a9b2-788085dc5945)
+![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/3ea6679e-2870-4b6d-9895-1969d2cd1486)
+
 
 
 
