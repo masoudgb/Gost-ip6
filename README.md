@@ -2,36 +2,38 @@
 
 [English](README.md) | [فارسی](README-Fa.md)
 
-## Overview
+**Description:**
 
-Gost IP6 Script is a Bash script designed to simplify the setup of Gost tunnels for both IPv4 and IPv6. This script provides an easy-to-use interface for configuring Gost with various options, allowing users to create secure tunnels for their network needs.
+This Bash script simplifies the configuration of Gost tunnels with options for both IP4 and IP6 setups. The script presents an interactive menu for user-friendly execution.
 
-## Features
 
-- Gost tunnel creation for both IPv4 and IPv6.
-- Customizable port configurations, supporting both manual entry and port ranges.
-- Flexible protocol selection, with options for TCP and Grcp.
-- Uninstallation option for easy removal.
+**Prerequisites:**
 
-## Installation 
+- Ensure you have root privileges before running the script.
+
+**Tested Environment:**
+
+- Ubuntu 20.04
+
+**Installation:**
 
 ![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/3ea6679e-2870-4b6d-9895-1969d2cd1486)
 
 
+Clone the repository:
 
-
-
-1. Ensure you have root privileges before running the script.
-
-   ```bash
+```bash
    bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
    ```
+  
+Custom Version 
 
-2. Choose from the available options, including tunnel creation, port configuration, and protocol selection.
+```bash
+   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh) v0.6
+   ```
 
-3. Follow the prompts to input destination IP, ports, and protocol preferences.
+Follow the on-screen prompts to configure Gost tunnels according to your preferences.
 
-4. The script will install and configure Gost based on your selections.
 
 ## Project Tutorial
 
@@ -39,14 +41,38 @@ Gost IP6 Script is a Bash script designed to simplify the setup of Gost tunnels 
 
 Support the Video creator: [Telegram Channel](https://t.me/+2S96GjBZJ1cxYzVk)
 
-## Uninstallation
 
-To uninstall Gost, choose the uninstall option, and the script will remove Gost along with its systemd service.
+**Options:**
 
-## Credits
+The script offers the following options:
 
-Created by Masoud Gb with special thanks to Mr.HamidRouter.
+- Gost Tunnel By IP4
+- Gost Tunnel By IP6
+- Add New IP
+- Change Gost Version
+- Restart Gost
+- Uninstall
+- Exit
+
+
+**Important Notes for Configuration:**
+
+- Avoid using duplicate ports.
+- Choose port ranges between 54 and 65535 for optimal configuration.
+- Your suggestions for script improvement and enhancement are highly welcomed. Feel free to share your ideas on the [GitHub repository](https://github.com/your-username/gost-ip6-script).
+
+
+**Credits:**
+
+- Created By Masoud Gb
+- Special Thanks to Hamid Router
 
 ## Version
 
-Gost IP6 Script v0.6
+Gost IP6 Script v0.9
+
+**License:**
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
