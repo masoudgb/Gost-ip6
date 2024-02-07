@@ -26,7 +26,7 @@ Clone the repository:
    bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
    ```
 
-Custom Version 
+Custom Version: 
 
 ```bash
    bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v0.6/Gost.sh)
