@@ -51,7 +51,7 @@ The script offers the following options:
 **Important Notes for Configuration:**
 
 - Avoid using duplicate ports.
-- Choose port ranges between 54 and 65535 for optimal configuration.
+- Choose port ranges between 54 and 65000 for optimal configuration.
 - Your suggestions for script improvement and enhancement are highly welcomed. Feel free to share your ideas on the [GitHub repository](https://github.com/your-username/gost-ip6-script).
 
 
