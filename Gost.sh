@@ -10,7 +10,6 @@ fi
 echo $'\e[32mUpdating system packages, please wait...\e[0m'
 apt update 
 echo $'\e[32mSystem update completed.\e[0m'
-nohup sysctl -w net.ipv4.ip_local_port_range="1024 65535" > /dev/null 2>&1 &
 
 # Options with green color
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
