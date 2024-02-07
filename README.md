@@ -44,7 +44,6 @@ The script offers the following options:
 - Gost Tunnel By IP6
 - Add New IP
 - Change Gost Version
-- Restart Gost
 - Uninstall
 - Exit
 
