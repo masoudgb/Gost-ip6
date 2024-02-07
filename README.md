@@ -64,8 +64,4 @@ The script offers the following options:
 
 Gost IP6 Script v0.9
 
-**License:**
-
-This project is licensed under the [MIT License](LICENSE).
-
 ---
