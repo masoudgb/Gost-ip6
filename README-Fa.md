@@ -24,6 +24,13 @@
    bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
    ```
 
+ نسخه سفارشی:
+
+```bash
+   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v0.6/Gost.sh)
+   ```
+
+
 دستورات روی صفحه نمایش را دنبال کنید تا تونل‌های Gost خود را بر اساس ترجیحات شما پیکربندی کنید.
 
 ## آموزش پروژه
