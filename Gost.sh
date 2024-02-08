@@ -26,8 +26,9 @@ options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
          $'\e[36m3. \e[0mAdd New IP'
          $'\e[36m4. \e[0mChange Gost Version'
-         $'\e[36m5. \e[0mUninstall'
-         $'\e[36m6. \e[0mExit')
+         $'\e[36m5. \e[0mInstall BBR'
+         $'\e[36m6. \e[0mUninstall'
+         $'\e[36m7. \e[0mExit')
 
 # Print prompt and options with cyan color
 printf "\e[32mPlease Choice Your Options:\e[0m\n"
@@ -279,6 +280,13 @@ elif [ "$choice" -eq 4 ]; then
 
 # If option 5 is selected
 elif [ "$choice" -eq 5 ]; then
+    echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
+    wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
+    chmod +x bbr.sh && \
+    bash bbr.sh
+    bash "$0"
+# If option 6 is selected
+elif [ "$choice" -eq 6 ]; then
     # Prompt the user for confirmation
     read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
 
@@ -289,8 +297,8 @@ elif [ "$choice" -eq 5 ]; then
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
-# If option 6 is selected
-elif [ "$choice" -eq 6 ]; then
+# If option 7 is selected
+elif [ "$choice" -eq 7 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
