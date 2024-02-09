@@ -17,7 +17,7 @@ This Bash script simplifies the configuration of Gost tunnels with options for b
 
 **Installation:**
 
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/3ea6679e-2870-4b6d-9895-1969d2cd1486)
+
 
 
 Clone the repository:
