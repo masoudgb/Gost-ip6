@@ -16,7 +16,7 @@
 
 **نصب:**
 
-![ScreenShot_2024-01-29_02-22-04](https://github.com/masoudgb/Gost-ip6/assets/87688187/3ea6679e-2870-4b6d-9895-1969d2cd1486)
+![Screenshot-gost](https://github.com/masoudgb/Gost-ip6/assets/87688187/aace53ce-598d-4035-a51b-925a395c43d5).
 
 کلون کردن مخزن:
 
