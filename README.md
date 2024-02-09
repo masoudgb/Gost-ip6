@@ -13,7 +13,7 @@ This Bash script simplifies the configuration of Gost tunnels with options for b
 
 **Tested Environment:**
 
-- Ubuntu 20.04
+- Ubuntu 20.04 , Ubuntu 22.04
 
 **Installation:**
 
