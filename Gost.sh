@@ -108,7 +108,6 @@ fi
             echo $'\e[32mGost downloaded successfully.\e[0m' && \
             tar -xvzf gost_3.0.0-nightly.20240128_linux_amd64.tar.gz -C /usr/local/bin/ && \
             cd /usr/local/bin/ && 
-            sleep 2
             chmod +x gost && \ 
             echo $'\e[32mGost installed successfully.\e[0m'
         else
