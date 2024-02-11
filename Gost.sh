@@ -103,11 +103,17 @@ fi
         echo $'\e[32mGost installed successfully.\e[0m'
     else
         if [ "$gost_version_choice" -eq 2 ]; then
-    echo $'\e[32mInstalling Gost version 3.0.0, please wait...\e[0m' && \
-    wget https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20240128/gost_3.0.0-nightly.20240128_linux_amd64.tar.gz && \
-            echo $'\e[32mGost downloaded successfully.\e[0m' && \
-            tar -xvzf gost_3.0.0-nightly.20240128_linux_amd64.tar.gz -C /usr/local/bin/ && \
-            cd /usr/local/bin/ && \ chmod +x gost && \ 
+    echo $'\e[32mInstalling Gost version 3.0.0, please wait...\e[0m'
+    
+    # Download Gost
+    wget -O /tmp/gost.tar.gz https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20240128/gost_3.0.0-nightly.20240128_linux_amd64.tar.gz
+    
+    # Extract Gost
+    tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/
+    
+    # Make Gost executable
+    chmod +x /usr/local/bin/gost
+    
     echo $'\e[32mGost installed successfully.\e[0m'
 else
     echo $'\e[31mInvalid choice. Exiting...\e[0m'
