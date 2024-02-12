@@ -26,9 +26,10 @@ options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
          $'\e[36m3. \e[0mAdd New IP'
          $'\e[36m4. \e[0mChange Gost Version'
-         $'\e[36m5. \e[0mInstall BBR'
-         $'\e[36m6. \e[0mUninstall'
-         $'\e[36m7. \e[0mExit')
+         $'\e[36m5. \e[0mAuto Restart Gost'
+         $'\e[36m6. \e[0mInstall BBR'
+         $'\e[36m7. \e[0mUninstall'
+         $'\e[36m8. \e[0mExit')
 
 # Print prompt and options with cyan color
 printf "\e[32mPlease Choice Your Options:\e[0m\n"
@@ -273,28 +274,93 @@ elif [ "$choice" -eq 4 ]; then
             exit
             ;;
     esac
-
 # If option 5 is selected
 elif [ "$choice" -eq 5 ]; then
+    echo $'\e[32mChoose Auto Restart option:\e[0m'
+    echo $'\e[36m1. \e[0mEnable Auto Restart'
+    echo $'\e[36m2. \e[0mDisable Auto Restart'
+
+    # Read user input for Auto Restart option
+    read -p $'\e[97mYour choice: \e[0m' auto_restart_option
+
+    # Process user choice for Auto Restart
+    case "$auto_restart_option" in
+        1)
+            # Logic to enable Auto Restart
+            echo $'\e[32mAuto Restart Enabled.\e[0m'
+            # Remove any existing scheduled restart using 'at' command
+            sudo at -l | awk '{print $1}' | xargs -I {} atrm {}
+            # Prompt the user for the restart time in hours
+            read -p $'\e[97mEnter the restart time in hours: \e[0m' restart_time_hours
+
+            # Convert hours to minutes
+            restart_time_minutes=$((restart_time_hours * 60))
+
+            # Write a script to restart Gost
+            echo -e "#!/bin/bash\n\nsudo systemctl daemon-reload\nsudo systemctl restart gost_*.service" | sudo tee /usr/bin/auto_restart_cronjob.sh > /dev/null
+
+            # Give execute permission to the script
+            sudo chmod +x /usr/bin/auto_restart_cronjob.sh
+
+            # Remove any existing cron job for Auto Restart
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            # Write a new cron job to execute the script at the specified intervals
+            (crontab -l ; echo "0 */$restart_time_hours * * * /usr/bin/auto_restart_cronjob.sh") | crontab -
+
+            echo $'\e[32mAuto Restart scheduled successfully.\e[0m'
+            ;;
+        2)
+            # Logic to disable Auto Restart
+            echo $'\e[32mAuto Restart Disabled.\e[0m'
+            # Remove the script and cron job for Auto Restart
+            sudo rm -f /usr/bin/auto_restart_cronjob.sh
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            echo $'\e[32mAuto Restart disabled successfully.\e[0m'
+            ;;
+        *)
+            echo $'\e[31mInvalid choice. Exiting...\e[0m'
+            exit
+            ;;
+    esac
+ bash "$0"
+fi
+# If option 6 is selected
+if [ "$choice" -eq 6 ]; then
     echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
     wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
     chmod +x bbr.sh && \
     bash bbr.sh
     bash "$0"
-# If option 6 is selected
-elif [ "$choice" -eq 6 ]; then
+# If option 7 is selected
+elif [ "$choice" -eq 7 ]; then
     # Prompt the user for confirmation
     read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
 
     # Check user confirmation
     if [ "$uninstall_confirm" == "y" ]; then
         # Countdown for uninstallation in a single line
-        echo $'\e[32mUninstalling Gost in 3 seconds... \e[0m' && sleep 1 && echo $'\e[32m2... \e[0m' && sleep 1 && echo $'\e[32m1... \e[0m' && sleep 1 && { sudo systemctl daemon-reload && sudo systemctl stop gost_*.service && sudo rm -f /usr/local/bin/gost && sudo rm -f /usr/lib/systemd/system/gost_*.service && sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service && echo $'\e[32mGost successfully uninstalled.\e[0m'; }
+        echo $'\e[32mUninstalling Gost in 3 seconds... \e[0m' && sleep 1 && echo $'\e[32m2... \e[0m' && sleep 1 && echo $'\e[32m1... \e[0m' && sleep 1 && {
+            # Remove the auto_restart_cronjob.sh script
+            sudo rm -f /usr/bin/auto_restart_cronjob.sh
+
+            # Remove the cron job for Auto Restart
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            # Continue with the rest of the uninstallation process
+            sudo systemctl daemon-reload
+            sudo systemctl stop gost_*.service
+            sudo rm -f /usr/local/bin/gost
+            sudo rm -f /usr/lib/systemd/system/gost_*.service
+            sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
+            echo $'\e[32mGost successfully uninstalled.\e[0m'
+        }
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
-# If option 7 is selected
-elif [ "$choice" -eq 7 ]; then
+# If option 8 is selected
+elif [ "$choice" -eq 8 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
