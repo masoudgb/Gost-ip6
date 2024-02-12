@@ -294,7 +294,8 @@ elif [ "$choice" -eq 5 ]; then
             read -p $'\e[97mEnter the restart time in hours: \e[0m' restart_time_hours
 
             # Convert hours to minutes
-            restart_time_minutes=$((restart_time_hours * 60))
+            declare -i restart_time_minutes
+restart_time_minutes=$((restart_time_hours * 60))
 
             # Write a script to restart Gost
             echo -e "#!/bin/bash\n\nsudo systemctl daemon-reload\nsudo systemctl restart gost_*.service" | sudo tee /usr/bin/auto_restart_cronjob.sh > /dev/null
