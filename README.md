@@ -51,6 +51,7 @@ The script offers the following options:
 - Gost Tunnel By IP6
 - Add New IP
 - Change Gost Version
+- Auto Restart Gost
 - Install BBR
 - Uninstall
 - Exit
