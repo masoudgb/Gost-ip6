@@ -169,7 +169,7 @@ sleep 2
     done
 
     echo $'\e[32mGost configuration applied successfully.\e[0m'
-
+    
 # If option 3 is selected
 elif [ "$choice" -eq 3 ]; then
     read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
@@ -226,22 +226,20 @@ EOL
 
     # Complete the systemd service file
     cat <<EOL | sudo tee -a "/usr/lib/systemd/system/gost_$destination_ip.service" > /dev/null
-
 [Install]
 WantedBy=multi-user.target
 EOL
 
     # Reload and restart the systemd service
-  sleep 1
-        sudo systemctl enable "gost_$file_index.service"
-sleep 1
-        sudo systemctl daemon-reload
-sleep 2
-        sudo systemctl start "gost_$file_index.service"
+    sleep 1
+    sudo systemctl enable "gost_$destination_ip.service"
+    sleep 1
+    sudo systemctl daemon-reload
+    sleep 2
+    sudo systemctl start "gost_$destination_ip.service"
 
     echo $'\e[32mGost configuration applied successfully.\e[0m'
     bash "$0"
-
 # If option 4 is selected
 elif [ "$choice" -eq 4 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
