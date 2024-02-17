@@ -8,9 +8,9 @@ fi
 
 # Update the system
 echo $'\e[32mUpdating system packages, please wait...\e[0m'
+sysctl net.ipv4.ip_local_port_range="1024 65535"
 apt update 
 echo $'\e[32mSystem update completed.\e[0m'
-setsid sh -c 'sysctl -w net.ipv4.ip_local_port_range="1024 65535" > /dev/null 2>&1' &
 
 # Options with green color
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
@@ -20,16 +20,17 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v1.5"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v1.8"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
-         $'\e[36m3. \e[0mAdd New IP'
-         $'\e[36m4. \e[0mChange Gost Version'
-         $'\e[36m5. \e[0mAuto Restart Gost'
-         $'\e[36m6. \e[0mInstall BBR'
-         $'\e[36m7. \e[0mUninstall'
-         $'\e[36m8. \e[0mExit')
+         $'\e[36m3. \e[0mGost Status'
+         $'\e[36m4. \e[0mAdd New IP'
+         $'\e[36m5. \e[0mChange Gost Version'
+         $'\e[36m6. \e[0mAuto Restart Gost'
+         $'\e[36m7. \e[0mInstall BBR'
+         $'\e[36m8. \e[0mUninstall'
+         $'\e[36m9. \e[0mExit')
 
 # Print prompt and options with cyan color
 printf "\e[32mPlease Choice Your Options:\e[0m\n"
@@ -46,7 +47,7 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
         read -p $'\e[97mPlease enter the destination (Kharej) IPv6: \e[0m' destination_ip
     fi
 
-    read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[32m1. \e[0mEnter Manually Ports\n\e[32m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' port_option
+    read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter Manually Ports\n\e[36m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' port_option
 
 if [ "$port_option" -eq 1 ]; then
     read -p $'\e[36mPlease enter the desired ports (separated by commas): \e[0m' ports
@@ -123,11 +124,12 @@ fi
     port_count=${#port_array[@]}
 
     # Set the maximum number of ports per file
-    max_ports_per_file=15000
+    max_ports_per_file=12000
 
     # Calculate the number of files needed
     file_count=$(( (port_count + max_ports_per_file - 1) / max_ports_per_file ))
 
+    # Continue creating the systemd service files
     for ((file_index = 0; file_index < file_count; file_index++)); do
         # Create a new systemd service file
         cat <<EOL | sudo tee "/usr/lib/systemd/system/gost_$file_index.service" > /dev/null
@@ -141,6 +143,7 @@ Type=simple
 EOL
 
         # Add lines for each port in the current file
+        exec_start_command="ExecStart=/usr/local/bin/gost"
         for ((i = file_index * max_ports_per_file; i < (file_index + 1) * max_ports_per_file && i < port_count; i++)); do
             port="${port_array[i]}"
             exec_start_command+=" -L=$protocol://:$port/[$destination_ip]:$port"
@@ -157,21 +160,51 @@ WantedBy=multi-user.target
 EOL
 
         # Reload and restart the systemd service
-sleep 1
-        sudo systemctl enable "gost_$file_index.service"
-sleep 1
         sudo systemctl daemon-reload
-sleep 2
+        sudo systemctl enable "gost_$file_index.service"
         sudo systemctl start "gost_$file_index.service"
-
-        # Update exec_start_command for the next iteration
-        exec_start_command="ExecStart=/usr/local/bin/gost"
     done
 
-    echo $'\e[32mGost configuration applied successfully.\e[0m'
+echo $'\e[32mGost configuration applied successfully.\e[0m'
     
 # If option 3 is selected
 elif [ "$choice" -eq 3 ]; then
+    # Check if Gost is installed
+    if command -v gost &>/dev/null; then
+        echo $'\e[32mGost is installed. Checking configuration and status...\e[0m'
+        
+        # Check Gost configuration and status
+        systemctl list-unit-files | grep -q "gost_"
+        if [ $? -eq 0 ]; then
+            echo $'\e[32mGost is configured and active.\e[0m'
+            
+            # Get and display used IPs and ports
+            for service_file in /usr/lib/systemd/system/gost_*.service; do
+                # Extract the IP, port, and protocol information using awk
+                service_info=$(awk -F'[-=:/\\[\\]]+' '/ExecStart=/ {print $14,$15,$22,$20,$23}' "$service_file")
+
+                # Split the extracted information into an array
+                read -a info_array <<< "$service_info"
+
+                # Display IP, port, and protocol information with corrected port range
+                echo -e "\e[97mIP:\e[0m ${info_array[0]} \e[97mPort:\e[0m ${info_array[1]},... \e[97mProtocol:\e[0m ${info_array[2]}"
+
+            done
+        else
+            echo $'\e[33mGost is installed, but not configured or active.\e[0m'
+        fi
+    else
+        echo $'\e[33mGost Tunnel is not installed. \e[0m'
+    fi
+
+    read -n 1 -s -r -p $'\e[36m0. \e[0mBack to menu: \e[0m' choice
+
+if [ "$choice" -eq 0 ]; then
+    bash "$0"
+fi
+
+# If option 4 is selected
+elif [ "$choice" -eq 4 ]; then
     read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
     read -p $'\e[36mPlease enter the new port (separated by commas): \e[0m' port
     read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \e[32m\nYour choice: \e[0m' protocol_option
@@ -207,7 +240,7 @@ EOL
     port_count=${#port_array[@]}
 
     # Set the maximum number of ports per file
-    max_ports_per_file=15000
+    max_ports_per_file=12000
 
     # Calculate the number of files needed
     file_count=$(( (port_count + max_ports_per_file - 1) / max_ports_per_file ))
@@ -226,22 +259,20 @@ EOL
 
     # Complete the systemd service file
     cat <<EOL | sudo tee -a "/usr/lib/systemd/system/gost_$destination_ip.service" > /dev/null
+
 [Install]
 WantedBy=multi-user.target
 EOL
 
     # Reload and restart the systemd service
-    sleep 1
-    sudo systemctl enable "gost_$destination_ip.service"
-    sleep 1
     sudo systemctl daemon-reload
-    sleep 2
+    sudo systemctl enable "gost_$destination_ip.service"
     sudo systemctl start "gost_$destination_ip.service"
 
     echo $'\e[32mGost configuration applied successfully.\e[0m'
     bash "$0"
-# If option 4 is selected
-elif [ "$choice" -eq 4 ]; then
+# If option 5 is selected
+elif [ "$choice" -eq 5 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.0.0 (latest)'
@@ -272,8 +303,8 @@ elif [ "$choice" -eq 4 ]; then
             exit
             ;;
     esac
-# If option 5 is selected
-elif [ "$choice" -eq 5 ]; then
+# If option 6 is selected
+elif [ "$choice" -eq 6 ]; then
     echo $'\e[32mChoose Auto Restart option:\e[0m'
     echo $'\e[36m1. \e[0mEnable Auto Restart'
     echo $'\e[36m2. \e[0mDisable Auto Restart'
@@ -324,15 +355,15 @@ elif [ "$choice" -eq 5 ]; then
     esac
  bash "$0"
 fi
-# If option 6 is selected
-if [ "$choice" -eq 6 ]; then
+# If option 7 is selected
+if [ "$choice" -eq 7 ]; then
     echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
     wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
     chmod +x bbr.sh && \
     bash bbr.sh
     bash "$0"
-# If option 7 is selected
-elif [ "$choice" -eq 7 ]; then
+# If option 8 is selected
+elif [ "$choice" -eq 8 ]; then
     # Prompt the user for confirmation
     read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
 
@@ -357,8 +388,10 @@ elif [ "$choice" -eq 7 ]; then
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
-# If option 8 is selected
-elif [ "$choice" -eq 8 ]; then
+# If option 9 is selected
+elif [ "$choice" -eq 9 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
+
+
