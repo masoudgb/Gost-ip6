@@ -49,6 +49,7 @@ The script offers the following options:
 
 - Gost Tunnel By IP4
 - Gost Tunnel By IP6
+- Gost Status
 - Add New IP
 - Change Gost Version
 - Auto Restart Gost
@@ -71,6 +72,6 @@ The script offers the following options:
 
 ## Version
 
-Gost IP6 Script v1.5
+Gost IP6 Script v1.8
 
 ---
