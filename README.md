@@ -61,6 +61,7 @@ The script offers the following options:
 
 **Important Notes for Configuration:**
 
+- Run Script Again By "gost" Command
 - Avoid using duplicate ports.
 - Choose port ranges between 54 and 65000 for optimal configuration.
 - Your suggestions for script improvement and enhancement are highly welcomed. Feel free to share your ideas on the [GitHub repository](https://github.com/masoudgb/Gost-ip6/issues).
