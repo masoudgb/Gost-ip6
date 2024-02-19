@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Check if the user has root access
@@ -20,17 +21,18 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v1.8"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v2.1.1"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
          $'\e[36m3. \e[0mGost Status'
-         $'\e[36m4. \e[0mAdd New IP'
-         $'\e[36m5. \e[0mChange Gost Version'
-         $'\e[36m6. \e[0mAuto Restart Gost'
-         $'\e[36m7. \e[0mInstall BBR'
-         $'\e[36m8. \e[0mUninstall'
-         $'\e[36m9. \e[0mExit')
+         $'\e[36m4. \e[0mUpdate Script'
+         $'\e[36m5. \e[0mAdd New IP'
+         $'\e[36m6. \e[0mChange Gost Version'
+         $'\e[36m7. \e[0mAuto Restart Gost'
+         $'\e[36m8. \e[0mInstall BBR'
+         $'\e[36m9. \e[0mUninstall'
+         $'\e[36m10. \e[0mExit')
 
 # Print prompt and options with cyan color
 printf "\e[32mPlease Choice Your Options:\e[0m\n"
@@ -115,7 +117,6 @@ else
     exit
 fi
     fi
-
     # Continue creating the systemd service file
     exec_start_command="ExecStart=/usr/local/bin/gost"
 
@@ -205,6 +206,28 @@ fi
 
 # If option 4 is selected
 elif [ "$choice" -eq 4 ]; then
+    read -p $'\e[32mDo you want to update Gost script? (y/n): \e[0m' update_choice
+
+    if [ "$update_choice" == "y" ]; then
+        echo $'\e[32mUpdating Gost, please wait...\e[0m'
+        # Save Gost.sh in /etc/gost directory
+        sudo mkdir -p /etc/gost
+wget -O /etc/gost/Gost.sh https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh
+chmod +x /etc/gost/Gost.sh
+        echo $'\e[32mUpdate completed.\e[0m'
+        echo 'alias gost="bash /etc/gost/Gost.sh"' >> ~/.bashrc
+source ~/.bashrc
+
+        echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
+    else
+        echo $'\e[32mUpdate canceled.\e[0m'
+    fi
+
+    bash "$0"
+fi
+
+# If option 5 is selected
+if [ "$choice" -eq 5 ]; then
     read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
     read -p $'\e[36mPlease enter the new port (separated by commas): \e[0m' port
     read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \e[32m\nYour choice: \e[0m' protocol_option
@@ -271,8 +294,8 @@ EOL
 
     echo $'\e[32mGost configuration applied successfully.\e[0m'
     bash "$0"
-# If option 5 is selected
-elif [ "$choice" -eq 5 ]; then
+# If option 6 is selected
+elif [ "$choice" -eq 6 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.0.0 (latest)'
@@ -300,11 +323,13 @@ elif [ "$choice" -eq 5 ]; then
             ;;
         *)
             echo $'\e[31mInvalid choice. Exiting...\e[0m'
-            exit
+   exit
             ;;
     esac
-# If option 6 is selected
-elif [ "$choice" -eq 6 ]; then
+    bash "$0"
+
+# If option 7 is selected
+elif [ "$choice" -eq 7 ]; then
     echo $'\e[32mChoose Auto Restart option:\e[0m'
     echo $'\e[36m1. \e[0mEnable Auto Restart'
     echo $'\e[36m2. \e[0mDisable Auto Restart'
@@ -355,15 +380,16 @@ elif [ "$choice" -eq 6 ]; then
     esac
  bash "$0"
 fi
-# If option 7 is selected
-if [ "$choice" -eq 7 ]; then
+# If option 8 is selected
+if [ "$choice" -eq 8 ]; then
     echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
     wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
     chmod +x bbr.sh && \
     bash bbr.sh
     bash "$0"
-# If option 8 is selected
-elif [ "$choice" -eq 8 ]; then
+
+# If option 9 is selected
+elif [ "$choice" -eq 9 ]; then
     # Prompt the user for confirmation
     read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
 
@@ -381,6 +407,7 @@ elif [ "$choice" -eq 8 ]; then
             sudo systemctl daemon-reload
             sudo systemctl stop gost_*.service
             sudo rm -f /usr/local/bin/gost
+            sudo rm -rf /etc/gost
             sudo rm -f /usr/lib/systemd/system/gost_*.service
             sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
             echo $'\e[32mGost successfully uninstalled.\e[0m'
@@ -388,10 +415,8 @@ elif [ "$choice" -eq 8 ]; then
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
-# If option 9 is selected
-elif [ "$choice" -eq 9 ]; then
+# If option 10 is selected
+elif [ "$choice" -eq 10 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
-
-
