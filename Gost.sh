@@ -67,7 +67,7 @@ else
     echo $'\e[31mInvalid option. Exiting...\e[0m'
     exit
 fi
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \n\e[36m3. \e[0mBy Ws Protocol \n\e[36m4. \e[0mBy Mws Protocol \n\e[36m5. \e[0mBy Wss Protocol \e[32m\nYour choice: \e[0m' protocol_option
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "Tcp" Protocol \n\e[36m2. \e[0mBy "Grpc" Protocol \n\e[36m3. \e[0mBy "Ws" Protocol \n\e[36m4. \e[0mBy "Mws" Protocol \n\e[36m5. \e[0mBy "Wss" Protocol \e[32m\nYour choice: \e[0m' protocol_option
 
     if [ "$protocol_option" -eq 1 ]; then
         protocol="tcp"
