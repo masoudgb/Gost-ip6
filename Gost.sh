@@ -227,8 +227,8 @@ source ~/.bashrc
     else
         echo $'\e[32mUpdate canceled.\e[0m'
     fi
-fi
 bash "$0"
+fi
 # If option 5 is selected
 if [ "$choice" -eq 5 ]; then
     read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
