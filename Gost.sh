@@ -69,22 +69,22 @@ else
     exit
 fi
 
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \n\e[36m3. \e[0mBy Ws Protocol \n\e[36m4. \e[0mBy Mws Protocol \n\e[36m5. \e[0mBy Wss Protocol \e[32m\nYour choice: \e[0m' protocol_option
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \n\e[36m3. \e[0mBy WS Protocol \n\e[36m4. \e[0mBy MWS Protocol \n\e[36m5. \e[0mBy WSS Protocol \e[32m\nYour choice: \e[0m' protocol_option
 
-    if [ "$protocol_option" -eq 1 ]; then
-        protocol="tcp"
-   elif [ "$protocol_option" -eq 2 ]; then
-        protocol="grpc"
-   elif [ "$protocol_option" -eq 3 ]; then
-        protocol="ws"
-   elif [ "$protocol_option" -eq 4 ]; then
-        protocol="mws"
-   elif [ "$protocol_option" -eq 5 ]; then
-        protocol="wss"
-    else
-        echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
-        exit
-    fi
+if [ "$protocol_option" -eq 1 ]; then
+    protocol="tcp"
+elif [ "$protocol_option" -eq 2 ]; then
+    protocol="grpc"
+elif [ "$protocol_option" -eq 3 ]; then
+    protocol="ws"
+elif [ "$protocol_option" -eq 4 ]; then
+    protocol="mws"
+elif [ "$protocol_option" -eq 5 ]; then
+    protocol="wss"
+else
+    echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
+    exit
+fi
 
     echo $'\e[32mYou chose option\e[0m' $choice
     echo $'\e[97mDestination IP:\e[0m' $destination_ip
@@ -227,8 +227,10 @@ source ~/.bashrc
     else
         echo $'\e[32mUpdate canceled.\e[0m'
     fi
-bash "$0"
+
+    bash "$0"
 fi
+
 # If option 5 is selected
 if [ "$choice" -eq 5 ]; then
     read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
