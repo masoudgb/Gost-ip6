@@ -40,6 +40,11 @@ printf "%s\n" "${options[@]}"
 # Read user input with white color
 read -p $'\e[97mYour choice: \e[0m' choice
 
+# Check if the entered value is a valid integer
+if ! [[ "$choice" =~ ^[1-9][0-9]*$ ]]; then
+    echo $'\e[31mInvalid input. Please enter a valid integer.\e[0m'
+    exit
+fi
 # If option 1 or 2 is selected
 if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
     if [ "$choice" -eq 1 ]; then
