@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # Check if the user has root access
@@ -44,11 +43,10 @@ read -p $'\e[97mYour choice: \e[0m' choice
 # If option 1 or 2 is selected
 if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
     if [ "$choice" -eq 1 ]; then
-        read -p $'\e[97mPlease enter the destination (Kharej) IP: \e[0m' destination_ip
+        read -p $'\e[97mPlease enter the destination (Kharej) "IPv4": \e[0m' destination_ip
     elif [ "$choice" -eq 2 ]; then
-        read -p $'\e[97mPlease enter the destination (Kharej) IPv6: \e[0m' destination_ip
-    fi
-
+        read -p $'\e[97mPlease enter the destination (Kharej) "IPv6": \e[0m' destination_ip
+ fi
     read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter Manually Ports\n\e[36m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' port_option
 
 if [ "$port_option" -eq 1 ]; then
@@ -70,12 +68,19 @@ else
     exit
 fi
 
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \e[32m\nYour choice: \e[0m' protocol_option
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "\e[32mTcp\e[0m" Protocol \n\e[36m2. \e[0mBy "\e[32mGrpc\e[0m" Protocol \n\e[36m3. \e[0mBy "\e[32mWs\e[0m" Protocol \n\e[36m4. \e[0mBy "\e[32mMws\e[0m" Protocol \n\e[36m5. \e[0mBy "\e[32mWss\e[0m" Protocol \e[32m\nYour choice: \e[0m' protocol_option
+
 
     if [ "$protocol_option" -eq 1 ]; then
         protocol="tcp"
     elif [ "$protocol_option" -eq 2 ]; then
         protocol="grpc"
+    elif [ "$protocol_option" -eq 3 ]; then
+        protocol="ws"
+    elif [ "$protocol_option" -eq 4 ]; then
+        protocol="mws"
+    elif [ "$protocol_option" -eq 5 ]; then
+        protocol="wss"
     else
         echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
         exit
