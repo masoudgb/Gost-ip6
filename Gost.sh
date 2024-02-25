@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Check if the user has root access
 if [ "$EUID" -ne 0 ]; then
   echo $'\e[32mPlease run with root privileges.\e[0m'
   exit
@@ -20,7 +19,7 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v2.1.4"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v2.1.1"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -46,7 +45,8 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
         read -p $'\e[97mPlease enter the destination (Kharej) "IPv4": \e[0m' destination_ip
     elif [ "$choice" -eq 2 ]; then
         read -p $'\e[97mPlease enter the destination (Kharej) "IPv6": \e[0m' destination_ip
- fi
+    fi
+
     read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter Manually Ports\n\e[36m2. \e[0mEnter Range Ports\e[32m\nYour choice: \e[0m' port_option
 
 if [ "$port_option" -eq 1 ]; then
@@ -67,9 +67,7 @@ else
     echo $'\e[31mInvalid option. Exiting...\e[0m'
     exit
 fi
-
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "\e[32mTcp\e[0m" Protocol \n\e[36m2. \e[0mBy "\e[32mGrpc\e[0m" Protocol \n\e[36m3. \e[0mBy "\e[32mWs\e[0m" Protocol \n\e[36m4. \e[0mBy "\e[32mMws\e[0m" Protocol \n\e[36m5. \e[0mBy "\e[32mWss\e[0m" Protocol \e[32m\nYour choice: \e[0m' protocol_option
-
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \n\e[36m3. \e[0mBy Ws Protocol \n\e[36m4. \e[0mBy Mws Protocol \n\e[36m5. \e[0mBy Wss Protocol \e[32m\nYour choice: \e[0m' protocol_option
 
     if [ "$protocol_option" -eq 1 ]; then
         protocol="tcp"
@@ -90,7 +88,6 @@ fi
     echo $'\e[97mDestination IP:\e[0m' $destination_ip
     echo $'\e[97mPorts:\e[0m' $ports
     echo $'\e[97mProtocol:\e[0m' $protocol
-
     # Commands to install and configure Gost
     sudo apt install wget nano -y && \
     # Prompt user to choose Gost version
