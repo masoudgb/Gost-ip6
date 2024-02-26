@@ -15,6 +15,7 @@ else
     sudo ./Gost.sh
     rm -rf "$temp_dir"
 fi
+
 # Check if the user has root access
 if [ "$EUID" -ne 0 ]; then
   echo $'\e[32mPlease run with root privileges.\e[0m'
