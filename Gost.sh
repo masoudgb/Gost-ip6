@@ -15,7 +15,7 @@ else
     # Change directory to the location of the Gost script
     cd /etc/gost || exit
     sudo git reset --hard HEAD
-    sudo gost
+    gost
     rm -rf "$temp_dir"
 fi
 
