@@ -64,7 +64,7 @@ if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
         read -p $'\e[97mPlease enter the destination (Kharej) IPv6: \e[0m' destination_ip
     fi
 
-    read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter "Manually" Ports\n\e[36m2. \e[0mEnter "Range Ports"\e[32m\nYour choice: \e[0m' port_option
+    read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter "Manually" Ports\n\e[36m2. \e[0mEnter "Range" Ports\e[32m\nYour choice: \e[0m' port_option
 
 if [ "$port_option" -eq 1 ]; then
     read -p $'\e[36mPlease enter the desired ports (separated by commas): \e[0m' ports
