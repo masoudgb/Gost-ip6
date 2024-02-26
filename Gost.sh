@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Create a temporary directory
+temp_dir=$(mktemp -d)
+cd "$temp_dir" || exit
+wget https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh
+sudo mkdir -p /etc/gost
+sudo mv Gost.sh /etc/gost/
+sudo chmod +x /etc/gost/Gost.sh
+cd /etc/gost || exit
+sudo ./Gost.sh
+rm -rf "$temp_dir"
+
 # Check if the user has root access
 if [ "$EUID" -ne 0 ]; then
   echo $'\e[32mPlease run with root privileges.\e[0m'
