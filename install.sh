@@ -161,10 +161,10 @@ WantedBy=multi-user.target
 EOL
 
         # Reload and restart the systemd service
-        sudo systemctl enable "gost_$destination_ip.service"
-        sudo systemctl start "gost_$destination_ip.service"
+        sudo systemctl enable "gost_$file_index.service"
+        sudo systemctl start "gost_$file_index.service"
         sudo systemctl daemon-reload
-        sudo systemctl restart "gost_$destination_ip.service"
+        sudo systemctl restart "gost_$file_index.service"
     done
 
 echo $'\e[32mGost configuration applied successfully.\e[0m'
