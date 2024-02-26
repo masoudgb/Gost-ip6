@@ -288,10 +288,11 @@ WantedBy=multi-user.target
 EOL
 
     # Reload and restart the systemd service
-    sudo systemctl daemon-reload
     sudo systemctl enable "gost_$destination_ip.service"
     sudo systemctl start "gost_$destination_ip.service"
-
+    sudo systemctl daemon-reload
+    sudo systemctl restart "gost_$destination_ip.service"
+    
     echo $'\e[32mGost configuration applied successfully.\e[0m'
     bash "$0"
 # If option 6 is selected
