@@ -12,9 +12,9 @@ else
     sudo mv Gost.sh /etc/gost/
     sudo chmod +x /etc/gost/Gost.sh
     # Update the Gost script from GitHub
+    # Change directory to the location of the Gost script
     cd /etc/gost || exit
-    sudo git pull origin main
-    sudo chmod +x Gost.sh
+    sudo git reset --hard HEAD
     sudo ./Gost.sh
     rm -rf "$temp_dir"
 fi
