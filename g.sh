@@ -10,4 +10,3 @@ sudo chmod +x /etc/gost/install.sh
 cd /etc/gost || exit
 sudo ./install.sh
 rm -rf "$temp_dir"
-fi
