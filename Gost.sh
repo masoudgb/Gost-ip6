@@ -24,7 +24,6 @@ fi
 
 # Update the system
 echo $'\e[32mUpdating system packages, please wait...\e[0m'
-sysctl net.ipv4.ip_local_port_range="1024 65535"
 apt update 
 echo $'\e[32mSystem update completed.\e[0m'
 
