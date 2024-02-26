@@ -161,9 +161,10 @@ WantedBy=multi-user.target
 EOL
 
         # Reload and restart the systemd service
+        sudo systemctl enable "gost_$destination_ip.service"
+        sudo systemctl start "gost_$destination_ip.service"
         sudo systemctl daemon-reload
-        sudo systemctl enable "gost_$file_index.service"
-        sudo systemctl start "gost_$file_index.service"
+        sudo systemctl restart "gost_$destination_ip.service"
     done
 
 echo $'\e[32mGost configuration applied successfully.\e[0m'
@@ -210,9 +211,9 @@ elif [ "$choice" -eq 4 ]; then
 
     if [ "$update_choice" == "y" ]; then
         echo $'\e[32mUpdating Gost, please wait...\e[0m'
-        # Save Gost.sh in /etc/gost directory
+        # Save install.sh in /etc/gost directory
         sudo mkdir -p /etc/gost
-wget -O /etc/gost/Gost.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
+wget -O /etc/gost/install.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
 chmod +x /etc/gost/install.sh
         echo $'\e[32mUpdate completed.\e[0m'
         echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
