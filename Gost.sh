@@ -22,11 +22,6 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
-# Update the system
-echo $'\e[32mUpdating system packages, please wait...\e[0m'
-apt update 
-echo $'\e[32mSystem update completed.\e[0m'
-
 # Options with green color
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
  |      _ \    __|  __|        |  |   |  _ \  
