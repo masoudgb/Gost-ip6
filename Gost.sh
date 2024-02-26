@@ -12,7 +12,7 @@ wget https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh
 sudo mkdir -p /etc/gost
 sudo mv Gost.sh /etc/gost/
 sudo chmod +x /etc/gost/Gost.sh
-# cd /etc/gost || exit
+cd /etc/gost || exit
 sudo ./Gost.sh
 rm -rf "$temp_dir"
 fi
