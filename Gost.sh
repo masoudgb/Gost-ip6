@@ -4,19 +4,17 @@
 if [ -f "/etc/gost/Gost.sh" ]; then
     echo $'\e[32mThe Gost script has been previously downloaded. No repeated download.\e[0m'
 else
-    # Download the Gost script from GitHub
-    temp_dir=$(mktemp -d)
-    cd "$temp_dir" || exit
-    wget https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh
-    sudo mkdir -p /etc/gost
-    sudo mv Gost.sh /etc/gost/
-    sudo chmod +x /etc/gost/Gost.sh
-    # Update the Gost script from GitHub
-    # Change directory to the location of the Gost script
-    cd /etc/gost || exit
-    sudo git reset --hard HEAD
-    gost
-    rm -rf "$temp_dir"
+
+# Download the Gost script from GitHub
+temp_dir=$(mktemp -d)
+cd "$temp_dir" || exit
+wget https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh
+sudo mkdir -p /etc/gost
+sudo mv Gost.sh /etc/gost/
+sudo chmod +x /etc/gost/Gost.sh
+# cd /etc/gost || exit
+sudo ./Gost.sh
+rm -rf "$temp_dir"
 fi
 
 # Check if the user has root access
