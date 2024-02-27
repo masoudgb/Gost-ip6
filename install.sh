@@ -432,18 +432,12 @@ elif [ "$choice" -eq 9 ]; then
             sudo rm -rf /etc/gost
             sudo rm -f /usr/lib/systemd/system/gost_*.service
             sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
-            # Remove the command from sysctl.conf if it exists
-            if grep -qE '^\s*net.ipv4.ip_local_port_range\s*=\s*1024 65535' /etc/sysctl.conf; then
-                sudo sed -i '/net.ipv4.ip_local_port_range\s*=\s*1024 65535/d' /etc/sysctl.conf
-                sudo sysctl -p
-            else
-                echo "The specified line does not exist in /etc/sysctl.conf."
-            fi
             echo $'\e[32mGost successfully uninstalled.\e[0m'
         }
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
+    
 # If option 10 is selected
 elif [ "$choice" -eq 10 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
