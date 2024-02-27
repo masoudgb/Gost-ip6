@@ -92,15 +92,15 @@ fi
     # Define the command to be added
 command_to_add="sysctl net.ipv4.ip_local_port_range=\"1024 65535\""
 
-# Define the path to rc.local
-rc_local_path="/etc/rc.local"
+# Define the path to sysctl.conf
+sysctl_conf_path="/etc/sysctl.conf"
 
-# Check if the command is already present in rc.local
-if ! grep -q "$command_to_add" "$rc_local_path"; then
-    # Add the command to rc.local
-    echo "$command_to_add" | sudo tee -a "$rc_local_path"
-    # Allow execution of rc.local
-    sudo chmod +x "$rc_local_path"
+# Check if the command is already present in sysctl.conf
+if ! grep -q "$command_to_add" "$sysctl_conf_path"; then
+    # Add the command to sysctl.conf
+    echo "$command_to_add" | sudo tee -a "$sysctl_conf_path"
+    # Allow execution of sysctl.conf
+    sudo chmod +x "$sysctl_conf_path"
 fi
     apt update && sudo apt install wget nano -y && \
     echo $'\e[32mSystem update completed.\e[0m'
@@ -428,10 +428,10 @@ sudo rm -f /usr/local/bin/gost
 sudo rm -rf /etc/gost
 sudo rm -f /usr/lib/systemd/system/gost_*.service
 sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
-# Remove the command from rc.local if it exists
-if grep -q "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" /etc/rc.local; then
-    sudo sed -i '/sysctl net.ipv4.ip_local_port_range="1024 65535"/d' /etc/rc.local
-    echo $'\e[32mCommand removed from rc.local.\e[0m'
+# Remove the command from sysctl.conf if it exists
+if grep -q "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" /etc/sysctl.conf; then
+    sudo sed -i '/sysctl net.ipv4.ip_local_port_range="1024 65535"/d' /etc/sysctl.conf
+    echo $'\e[32mCommand removed from sysctl.conf.\e[0m'
 fi
 echo $'\e[32mGost successfully uninstalled.\e[0m'
 
