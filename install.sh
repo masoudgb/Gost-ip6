@@ -89,19 +89,13 @@ fi
     # Commands to install and configure Gost
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
-    # Define the command to be added
-command_to_add="net.ipv4.ip_local_port_range=\"1024 65535\""
-
-# Define the path to sysctl.conf
-sysctl_conf_path="/etc/sysctl.conf"
-
-# Check if the command is already present in sysctl.conf
-if ! grep -q "$command_to_add" "$sysctl_conf_path"; then
-    # Add the command to sysctl.conf
-    echo "$command_to_add" | sudo tee -a "$sysctl_conf_path"
-    # Allow execution of sysctl.conf
-    sudo chmod +x "$sysctl_conf_path"
+if ! sysctl -q net.ipv4.ip_local_port_range="1024 65535"; then
+    echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
+    sudo sysctl -p
+else
+    echo "The specified line already exists in /etc/sysctl.conf."
 fi
+
     apt update && sudo apt install wget nano -y && \
     echo $'\e[32mSystem update completed.\e[0m'
     # Prompt user to choose Gost version
