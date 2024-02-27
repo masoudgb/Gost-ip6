@@ -89,12 +89,18 @@ fi
     # Commands to install and configure Gost
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
-    # Check if the command is already present in rc.local
-if ! grep -q "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" /etc/rc.local; then
+    # Define the command to be added
+command_to_add="sysctl net.ipv4.ip_local_port_range=\"1024 65535\""
+
+# Define the path to rc.local
+rc_local_path="/etc/rc.local"
+
+# Check if the command is already present in rc.local
+if ! grep -q "$command_to_add" "$rc_local_path"; then
     # Add the command to rc.local
-    echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" | sudo tee -a /etc/rc.local
+    echo "$command_to_add" | sudo tee -a "$rc_local_path"
     # Allow execution of rc.local
-    sudo chmod +x /etc/rc.local
+    sudo chmod +x "$rc_local_path"
 fi
     apt update && sudo apt install wget nano -y && \
     echo $'\e[32mSystem update completed.\e[0m'
