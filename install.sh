@@ -437,8 +437,8 @@ elif [ "$choice" -eq 9 ]; then
             sudo rm -f /usr/lib/systemd/system/gost_*.service
             sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
             # Remove the command from sysctl.conf if it exists
-            if grep -qE '^\s*net.ipv4.ip_local_port_range\s*=\s*"1024 65535"' /etc/sysctl.conf; then
-                sudo sed -i '/net.ipv4.ip_local_port_range\s*=\s*"1024 65535"/d' /etc/sysctl.conf
+            if grep -qE '^\s*net.ipv4.ip_local_port_range\s*=\s*1024 65535' /etc/sysctl.conf; then
+                sudo sed -i '/net.ipv4.ip_local_port_range\s*=\s*1024 65535/d' /etc/sysctl.conf
                 sudo sysctl -p
             else
                 echo "The specified line does not exist in /etc/sysctl.conf."
