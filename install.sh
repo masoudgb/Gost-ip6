@@ -90,7 +90,7 @@ fi
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
     # Define the command to be added
-command_to_add="net.ipv4.ip_local_port_range="\1024 65535\""
+command_to_add="net.ipv4.ip_local_port_range=\"1024 65535\""
 
 # Define the path to sysctl.conf
 sysctl_conf_path="/etc/sysctl.conf"
