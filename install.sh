@@ -90,7 +90,7 @@ fi
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
     # Define the command to be added
-command_to_add="net.ipv4.ip_local_port_range=\"1024 65535\""
+command_to_add="net.ipv4.ip_local_port_range=\1024 65535\"
 
 # Define the path to sysctl.conf
 sysctl_conf_path="/etc/sysctl.conf"
@@ -429,8 +429,8 @@ sudo rm -rf /etc/gost
 sudo rm -f /usr/lib/systemd/system/gost_*.service
 sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
 # Remove the command from sysctl.conf if it exists
-if grep -q "net.ipv4.ip_local_port_range=\"1024 65535\"" /etc/sysctl.conf; then
-    sudo sed -i '/net.ipv4.ip_local_port_range="1024 65535"/d' /etc/sysctl.conf
+if grep -q "net.ipv4.ip_local_port_range=\1024 65535\" /etc/sysctl.conf; then
+    sudo sed -i '/net.ipv4.ip_local_port_range=1024 65535/d' /etc/sysctl.conf
     echo $'\e[32mCommand removed from sysctl.conf.\e[0m'
 fi
 echo $'\e[32mGost successfully uninstalled.\e[0m'
