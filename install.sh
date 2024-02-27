@@ -416,14 +416,19 @@ elif [ "$choice" -eq 9 ]; then
             crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
 
             # Continue with the rest of the uninstallation process
-            sudo systemctl daemon-reload
-            sudo systemctl stop gost_*.service
-            sudo rm -f /usr/local/bin/gost
-            sudo rm -rf /etc/gost
-            sudo rm -f /usr/lib/systemd/system/gost_*.service
-            sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
-            sudo sed -i '/sysctl net.ipv4.ip_local_port_range="1024 65535"/d' /etc/rc.local
-            echo $'\e[32mGost successfully uninstalled.\e[0m'
+sudo systemctl daemon-reload
+sudo systemctl stop gost_*.service
+sudo rm -f /usr/local/bin/gost
+sudo rm -rf /etc/gost
+sudo rm -f /usr/lib/systemd/system/gost_*.service
+sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
+# Remove the command from rc.local if it exists
+if grep -q "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" /etc/rc.local; then
+    sudo sed -i '/sysctl net.ipv4.ip_local_port_range="1024 65535"/d' /etc/rc.local
+    echo $'\e[32mCommand removed from rc.local.\e[0m'
+fi
+echo $'\e[32mGost successfully uninstalled.\e[0m'
+
         }
     else
         echo $'\e[32mUninstallation canceled.\e[0m'
