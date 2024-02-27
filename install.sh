@@ -88,27 +88,23 @@ fi
 
     # Commands to install and configure Gost
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
-    
-# Define a flag file
-flag_file="/tmp/sysctl_flag"
+    sysctl net.ipv4.ip_local_port_range="1024 65535"
+# Add the sysctl command to the end of the script
+echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" >> /etc/rc.local
 
-# Check if the flag file exists
-if [ -e "$flag_file" ]; then
-    echo "The sysctl command has already been executed. Exiting..."
-    exit 0
-fi
+# Enable the systemd service to run the sysctl command after reboot
+cat <<EOL > /etc/systemd/system/sysctl-custom.service
+[Unit]
+Description=Custom sysctl settings
 
-# Add the command to /etc/sysctl.conf
-echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
-# Apply changes immediately
-sudo sysctl -p
-echo "The specified line added to /etc/sysctl.conf and changes applied."
+[Service]
+ExecStart=/sbin/sysctl net.ipv4.ip_local_port_range="1024 65535"
 
-# Create the flag file to indicate that the command has been executed
-sudo touch "$flag_file"
-
-# Remove the flag file on script exit (optional)
-trap 'sudo rm -f "$flag_file"' EXIT
+[Install]
+WantedBy=multi-user.target
+EOL
+# Enable the service
+systemctl enable sysctl-custom
 
     apt update && sudo apt install wget nano -y && \
     echo $'\e[32mSystem update completed.\e[0m'
