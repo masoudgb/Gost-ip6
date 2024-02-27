@@ -89,11 +89,15 @@ fi
     # Commands to install and configure Gost
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
-if ! sysctl -q net.ipv4.ip_local_port_range="1024 65535"; then
-    echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
-    sudo sysctl -p
-else
+# Check if the specified line exists in /etc/sysctl.conf
+if grep -qE '^\s*net.ipv4.ip_local_port_range\s*=\s*1024 65535' /etc/sysctl.conf; then
     echo "The specified line already exists in /etc/sysctl.conf."
+else
+    # Add the command to /etc/sysctl.conf
+    echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
+    # Apply changes immediately
+    sudo sysctl -p
+    echo "The specified line added to /etc/sysctl.conf and changes applied."
 fi
 
     apt update && sudo apt install wget nano -y && \
