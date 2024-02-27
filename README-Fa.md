@@ -27,7 +27,7 @@
  نسخه سفارشی:
 
 ```bash
-   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v0.9/Gost.sh)
+   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
    ```
 
 
