@@ -89,16 +89,26 @@ fi
     # Commands to install and configure Gost
     echo $'\e[32mUpdating system packages, please wait...\e[0m'
     
-# Check if the specified line exists in /etc/sysctl.conf
-if grep -qE '^\s*net.ipv4.ip_local_port_range\s*=\s*1024 65535' /etc/sysctl.conf; then
-    echo "The specified line already exists in /etc/sysctl.conf."
-else
-    # Add the command to /etc/sysctl.conf
-    echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
-    # Apply changes immediately
-    sudo sysctl -p
-    echo "The specified line added to /etc/sysctl.conf and changes applied."
+# Define a flag file
+flag_file="/tmp/sysctl_flag"
+
+# Check if the flag file exists
+if [ -e "$flag_file" ]; then
+    echo "The sysctl command has already been executed. Exiting..."
+    exit 0
 fi
+
+# Add the command to /etc/sysctl.conf
+echo "net.ipv4.ip_local_port_range=1024 65535" | sudo tee -a /etc/sysctl.conf
+# Apply changes immediately
+sudo sysctl -p
+echo "The specified line added to /etc/sysctl.conf and changes applied."
+
+# Create the flag file to indicate that the command has been executed
+sudo touch "$flag_file"
+
+# Remove the flag file on script exit (optional)
+trap 'sudo rm -f "$flag_file"' EXIT
 
     apt update && sudo apt install wget nano -y && \
     echo $'\e[32mSystem update completed.\e[0m'
