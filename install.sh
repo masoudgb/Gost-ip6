@@ -422,6 +422,7 @@ elif [ "$choice" -eq 9 ]; then
             sudo rm -rf /etc/gost
             sudo rm -f /usr/lib/systemd/system/gost_*.service
             sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
+            sudo sed -i '/sysctl net.ipv4.ip_local_port_range="1024 65535"/d' /etc/rc.local
             echo $'\e[32mGost successfully uninstalled.\e[0m'
         }
     else
