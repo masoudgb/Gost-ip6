@@ -442,7 +442,7 @@ echo $'\e[32mGost successfully uninstalled.\e[0m'
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
 # If option 10 is selected
-elif [ "$choice" -eq 10 ]; then
+if [ "$choice" -eq 10 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
