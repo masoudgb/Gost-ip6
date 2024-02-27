@@ -435,6 +435,7 @@ elif [ "$choice" -eq 9 ]; then
             systemctl stop sysctl-custom
             systemctl disable sysctl-custom
             sudo rm -f /etc/systemd/system/sysctl-custom.service
+            sudo rm -f /etc/systemd/system/multi-user.target.wants/sysctl-custom.service
             systemctl daemon-reload
             echo $'\e[32mGost successfully uninstalled.\e[0m'
         }
