@@ -87,7 +87,10 @@ fi
     echo $'\e[97mProtocol:\e[0m' $protocol
 
     # Commands to install and configure Gost
-    sudo apt install wget nano -y && \
+    echo $'\e[32mUpdating system packages, please wait...\e[0m'
+    sysctl net.ipv4.ip_local_port_range="1024 65535"
+    apt update && sudo apt install wget nano -y && \
+    echo $'\e[32mSystem update completed.\e[0m'
     # Prompt user to choose Gost version
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
