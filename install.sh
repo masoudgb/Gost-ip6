@@ -236,9 +236,10 @@ elif [ "$choice" -eq 4 ]; then
 wget -O /etc/gost/install.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
 chmod +x /etc/gost/install.sh
         echo $'\e[32mUpdate completed.\e[0m'
-        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
-source ~/.bashrc
-
+        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bash_aliases
+source ~/.bash_aliases
+# echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bash_profile
+# source ~/.bash_profile
         echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
     else
         echo $'\e[32mUpdate canceled.\e[0m'
