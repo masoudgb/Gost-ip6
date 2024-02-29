@@ -6,8 +6,11 @@ if [ "$EUID" -ne 0 ]; then
   echo $'\e[32mPlease run with root privileges.\e[0m'
   exit
 fi
+# Specify the path to the script
+SCRIPT_PATH="/etc/gost/install.sh"
+# Add an alias for 'gost' to execute the script
+alias gost="bash $SCRIPT_PATH"
 
-# Options with green color
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
  |      _ \    __|  __|        |  |   |  _ \  
  |   | (   | \__ \  |          |  ___/  (   | 
@@ -236,9 +239,11 @@ elif [ "$choice" -eq 4 ]; then
 wget -O /etc/gost/install.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
 chmod +x /etc/gost/install.sh
         echo $'\e[32mUpdate completed.\e[0m'
-        
-        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bash_profile
-        source ~/.bash_profile
+
+# Add alias for 'gost' to execute the script
+        echo 'alias gost="bash $SCRIPT_PATH"' >> ~/.bashrc
+        source ~/.bashrc
+
         echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
     else
         echo $'\e[32mUpdate canceled.\e[0m'
