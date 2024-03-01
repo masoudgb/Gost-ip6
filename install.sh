@@ -106,6 +106,10 @@ EOL
 systemctl enable sysctl-custom
 
     apt update && sudo apt install wget nano -y && \
+    # Add alias for 'gost' to execute the script
+        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
+        source ~/.bashrc
+        echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
     echo $'\e[32mSystem update completed.\e[0m'
     # Prompt user to choose Gost version
     echo $'\e[32mChoose Gost version:\e[0m'
@@ -235,11 +239,6 @@ elif [ "$choice" -eq 4 ]; then
 wget -O /etc/gost/install.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
 chmod +x /etc/gost/install.sh
         echo $'\e[32mUpdate completed.\e[0m'
-
-# Add alias for 'gost' to execute the script
-        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
-        source ~/.bashrc
-        echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
     else
         echo $'\e[32mUpdate canceled.\e[0m'
     fi
