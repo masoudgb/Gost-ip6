@@ -6,9 +6,6 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
-# Create a logrotate configuration file for Gost in /etc/logrotate.d/gost
-echo -e "/var/log/syslog/gost.log {\n  rotate 5\n  weekly\n  size 100k\n  compress\n  missingok\n  notifempty\n}" > /etc/logrotate.d/gost
-
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
  |      _ \    __|  __|        |  |   |  _ \  
  |   | (   | \__ \  |          |  ___/  (   | 
@@ -166,6 +163,7 @@ Wants=network.target
 
 [Service]
 Type=simple
+Environment="GOST_LOGGER_LEVEL=fatal"
 EOL
 
         # Add lines for each port in the current file
@@ -278,6 +276,7 @@ Wants=network.target
 
 [Service]
 Type=simple
+Environment="GOST_LOGGER_LEVEL=fatal"
 EOL
 
     # Add lines for each port
