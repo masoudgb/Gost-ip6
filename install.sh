@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# Check if the Gost script is already present in the /etc/gost directory
 # Check if the user has root access
 if [ "$EUID" -ne 0 ]; then
   echo $'\e[32mPlease run with root privileges.\e[0m'
   exit
 fi
+
+# Create a logrotate configuration file for Gost in /etc/logrotate.d/gost
+echo -e "/var/log/syslog/gost.log {\n  rotate 5\n  weekly\n  size 100k\n  compress\n  missingok\n  notifempty\n}" > /etc/logrotate.d/gost
 
 echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
  |      _ \    __|  __|        |  |   |  _ \  
