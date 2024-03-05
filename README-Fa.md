@@ -39,6 +39,13 @@
 
 حمایت از سازنده ویدئو: [کانال تلگرام](https://t.me/+2S96GjBZJ1cxYzVk)
 
+---
+
+[![آموزش یوتیوب](https://img.youtube.com/vi/Qlz61mlkQ5A/0.jpg)](https://youtu.be/Qlz61mlkQ5A)
+
+حمایت از سازنده ویدئو: [کانال تلگرام](https://t.me/sixtininelearn)
+
+
 **گزینه‌ها:**
 
 اسکریپت گزینه‌های زیر را ارائه می‌دهد:
