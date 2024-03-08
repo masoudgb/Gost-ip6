@@ -13,7 +13,7 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v2.1.4"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v2.1.7"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -62,18 +62,14 @@ else
     exit
 fi
 
-    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "Tcp" Protocol \n\e[36m2. \e[0mBy "Grpc" Protocol \n\e[36m3. \e[0mBy "WS" Protocol \n\e[36m4. \e[0mBy "MWS" Protocol \n\e[36m5. \e[0mBy "WSS" Protocol \e[32m\nYour choice: \e[0m' protocol_option
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "Tcp" Protocol \n\e[36m2. \e[0mBy "Udp" Protocol \n\e[36m3. \e[0mBy "Grpc" Protocol \e[32m\nYour choice: \e[0m' protocol_option
 
 if [ "$protocol_option" -eq 1 ]; then
     protocol="tcp"
 elif [ "$protocol_option" -eq 2 ]; then
-    protocol="grpc"
+    protocol="udp"
 elif [ "$protocol_option" -eq 3 ]; then
-    protocol="ws"
-elif [ "$protocol_option" -eq 4 ]; then
-    protocol="mws"
-elif [ "$protocol_option" -eq 5 ]; then
-    protocol="wss"
+    protocol="grpc"
 else
     echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
     exit
