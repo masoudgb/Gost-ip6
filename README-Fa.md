@@ -19,16 +19,14 @@
 ![Screenshot-gost](https://github.com/masoudgb/Gost-ip6/assets/87688187/89865918-5e27-43d9-9c7b-de283a767424).
 
 کلون کردن مخزن:
-
-```bash
-   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
-   ```
+```
+bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
+```
 
  نسخه سفارشی:
-
-```bash
-   bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
-   ```
+```
+bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
+```
 
 
 دستورات روی صفحه نمایش را دنبال کنید تا تونل‌های Gost خود را بر اساس ترجیحات شما پیکربندی کنید.
