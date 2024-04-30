@@ -72,6 +72,6 @@ bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
 
 ## نسخه
 
-اسکریپت Gost IP6 v2.1.7
+اسکریپت Gost IP6 v2.2.0
 
 ---
