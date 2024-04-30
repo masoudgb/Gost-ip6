@@ -118,16 +118,16 @@ systemctl enable sysctl-custom
     # Download and install Gost based on user's choice
     if [ "$gost_version_choice" -eq 1 ]; then
         echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
-        wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
+        wget https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/gost/gost_2.11.5.gz && \
         echo $'\e[32mGost downloaded successfully.\e[0m' && \
-        gunzip gost-linux-amd64-2.11.5.gz && \
-        sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
+        gunzip gost_2.11.5.gz && \
+        sudo mv gost_2.11.5.gz /usr/local/bin/gost && \
         sudo chmod +x /usr/local/bin/gost && \
         echo $'\e[32mGost installed successfully.\e[0m'
     else
         if [ "$gost_version_choice" -eq 2 ]; then
     echo $'\e[32mInstalling Gost version 3.0.0, please wait...\e[0m'
-    wget -O /tmp/gost.tar.gz https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20240128/gost_3.0.0-nightly.20240128_linux_amd64.tar.gz
+    wget -O /tmp/gost.tar.gz https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/gost/gost_3.0.0.tar.gz
     tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/
     chmod +x /usr/local/bin/gost
     echo $'\e[32mGost installed successfully.\e[0m'
