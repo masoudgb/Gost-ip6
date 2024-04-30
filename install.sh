@@ -13,7 +13,7 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v2.1.7"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v2.2.0"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -22,9 +22,10 @@ options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m5. \e[0mAdd New IP'
          $'\e[36m6. \e[0mChange Gost Version'
          $'\e[36m7. \e[0mAuto Restart Gost'
-         $'\e[36m8. \e[0mInstall BBR'
-         $'\e[36m9. \e[0mUninstall'
-         $'\e[36m10. \e[0mExit')
+         $'\e[36m8. \e[0mAuto Clear Cache'
+         $'\e[36m9. \e[0mInstall BBR'
+         $'\e[36m10. \e[0mUninstall'
+         $'\e[36m11. \e[0mExit')
 
 # Print prompt and options with cyan color
 printf "\e[32mPlease Choice Your Options:\e[0m\n"
@@ -398,16 +399,70 @@ elif [ "$choice" -eq 7 ]; then
     esac
  bash "$0"
 fi
+
 # If option 8 is selected
-if [ "$choice" -eq 8 ]; then
+elif [ "$choice" -eq 8 ]; then
+    echo $'\e[32mChoose Auto Clear Cache option:\e[0m'
+    echo $'\e[36m1. \e[0mEnable Auto Clear Cache'
+    echo $'\e[36m2. \e[0mDisable Auto Clear Cache'
+
+    # Read user input for Auto Clear Cache option
+    read -p $'\e[97mYour choice: \e[0m' auto_clear_cache_option
+
+    # Process user choice for Auto Clear Cache
+    case "$auto_clear_cache_option" in
+        1)
+            # Enable Auto Clear Cache
+            enable_auto_clear_cache() {
+                echo $'\e[32mAuto Clear Cache Enabled.\e[0m'
+                
+                # Prompt user to choose the interval in days
+                read -p $'\e[97mEnter the interval in days (e.g., 1 for daily, 7 for weekly): \e[0m' interval_days
+                
+                # Set up the cron job based on the interval
+                cron_interval="*/$interval_days * * *"
+
+                # Write a new cron job to execute the cache clearing commands at the specified interval
+                echo "$cron_interval sync; echo 1 > /proc/sys/vm/drop_caches && sync; echo 2 > /proc/sys/vm/drop_caches && sync; echo 3 > /proc/sys/vm/drop_caches" | crontab -
+
+                echo $'\e[32mAuto Clear Cache scheduled successfully.\e[0m'
+            }
+
+            # Call the function to enable Auto Clear Cache
+            enable_auto_clear_cache
+            ;;
+        2)
+            # Disable Auto Clear Cache
+            disable_auto_clear_cache() {
+                echo $'\e[32mAuto Clear Cache Disabled.\e[0m'
+                
+                # Remove only the cron job related to auto clearing cache
+                crontab -l | grep -v "drop_caches" | crontab -
+
+                echo $'\e[32mAuto Clear Cache disabled successfully.\e[0m'
+            }
+
+            # Call the function to disable Auto Clear Cache
+            disable_auto_clear_cache
+            ;;
+        *)
+            echo $'\e[31mInvalid choice. Exiting...\e[0m'
+            exit
+            ;;
+    esac
+ bash "$0"
+fi
+
+# If option 9 is selected
+if [ "$choice" -eq 9 ]; then
     echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
     wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
     chmod +x bbr.sh && \
     bash bbr.sh
     bash "$0"
 
-# If option 9 is selected
-elif [ "$choice" -eq 9 ]; then
+# If option 10 is selected
+elif [ "$choice" -eq 10 ]; then
     # Prompt the user for confirmation
     read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
 
@@ -440,8 +495,8 @@ elif [ "$choice" -eq 9 ]; then
         echo $'\e[32mUninstallation canceled.\e[0m'
     fi
     
-# If option 10 is selected
-elif [ "$choice" -eq 10 ]; then
+# If option 11 is selected
+elif [ "$choice" -eq 11 ]; then
     echo $'\e[32mYou have exited the script.\e[0m'
     exit
 fi
