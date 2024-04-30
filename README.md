@@ -76,6 +76,6 @@ The script offers the following options:
 
 ## Version
 
-Gost IP6 Script v2.1.7
+Gost IP6 Script v2.2.0
 
 ---
