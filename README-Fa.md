@@ -16,7 +16,7 @@
 
 **نصب:**
 
-![Screenshot-gost](https://github.com/masoudgb/Gost-ip6/assets/87688187/89865918-5e27-43d9-9c7b-de283a767424).
+![Screenshot-gost](https://raw.githubusercontent.com/masoudgb/Gost-ip6/955933ccb4111291b2cc343a3f55e1fe05c83864/image/Screenshot_20240430_113105.jpg).
 
 کلون کردن مخزن:
 
@@ -54,6 +54,7 @@ bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
 - افزودن IP جدید
 - نصب بی بی ار
 - ریاستارت اتوماتیک گوست
+- پاک کردن اتوماتیک کش
 - تغییر نسخه Gost
 - حذف نصب
 - خروج
