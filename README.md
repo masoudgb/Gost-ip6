@@ -56,6 +56,7 @@ The script offers the following options:
 - Add New IP
 - Change Gost Version
 - Auto Restart Gost
+- Auto Clear Cashe
 - Install BBR
 - Uninstall
 - Exit
