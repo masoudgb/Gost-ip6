@@ -13,7 +13,7 @@ echo $'\e[35m'"  ___|              |        _ _|  _ \   /
                                               "$'\e[0m'
 
 echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-echo $'\e[35m'"Gost Ip6 Script v2.2.0"$'\e[0m'
+echo $'\e[35m'"Gost Ip6 Script v2.1.7"$'\e[0m'
 
 options=($'\e[36m1. \e[0mGost Tunnel By IP4'
          $'\e[36m2. \e[0mGost Tunnel By IP6'
@@ -420,10 +420,10 @@ if [ "$choice" -eq 8 ]; then
                 read -p $'\e[97mEnter the interval in days (e.g., 1 for daily, 7 for weekly): \e[0m' interval_days
                 
                 # Set up the cron job based on the interval
-                cron_interval="*/$interval_days * * *"
+                cron_interval="0 0 */$interval_days * *"
 
                 # Write a new cron job to execute the cache clearing commands at the specified interval
-                echo "$cron_interval sync; echo 1 > /proc/sys/vm/drop_caches && sync; echo 2 > /proc/sys/vm/drop_caches && sync; echo 3 > /proc/sys/vm/drop_caches" | crontab -
+                (crontab -l 2>/dev/null; echo "$cron_interval sync; echo 1 > /proc/sys/vm/drop_caches && sync; echo 2 > /proc/sys/vm/drop_caches && sync; echo 3 > /proc/sys/vm/drop_caches") | crontab -
 
                 echo $'\e[32mAuto Clear Cache scheduled successfully.\e[0m'
             }
