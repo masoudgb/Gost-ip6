@@ -401,7 +401,7 @@ elif [ "$choice" -eq 7 ]; then
 fi
 
 # If option 8 is selected
-elif [ "$choice" -eq 8 ]; then
+if [ "$choice" -eq 8 ]; then
     echo $'\e[32mChoose Auto Clear Cache option:\e[0m'
     echo $'\e[36m1. \e[0mEnable Auto Clear Cache'
     echo $'\e[36m2. \e[0mDisable Auto Clear Cache'
