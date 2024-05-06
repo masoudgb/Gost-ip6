@@ -30,7 +30,7 @@ bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/main/Gost.sh)
 Custom Version: 
 
 ```bash
-bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.1/Gost.sh)
+bash <(curl -Ls https://github.com/masoudgb/Gost-ip6/raw/v2.1.7/Gost.sh)
    ```
 
 Follow the on-screen prompts to configure Gost tunnels according to your preferences.
