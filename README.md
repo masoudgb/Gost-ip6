@@ -24,7 +24,7 @@ This Bash script simplifies the configuration of Gost tunnels with options for b
 Clone the repository:
 
 ```bash
-bash <(curl -Ls bash <(curl -Ls https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh))
+bash <(curl -Ls https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh))
    ```
 
 Custom Version: 
