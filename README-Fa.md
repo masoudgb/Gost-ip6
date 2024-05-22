@@ -21,7 +21,7 @@
 کلون کردن مخزن:
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh))
+bash <(curl -Ls https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh)
    ```
 
  نسخه سفارشی:
