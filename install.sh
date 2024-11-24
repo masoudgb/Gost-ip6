@@ -315,6 +315,7 @@ EOL
     bash "$0"
     
 # If option 6 is selected
+# If option 6 is selected
 elif [ "$choice" -eq 6 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
@@ -343,11 +344,17 @@ elif [ "$choice" -eq 6 ]; then
                            grep -E 'v3\.' | \
                            head -n 1)
             
+            # Check if a valid URL was fetched
+            if [ -z "$download_url" ]; then
+                echo $'\e[31mError: Could not find the download URL for the latest 3.x Gost version.\e[0m'
+                exit 1
+            fi
+
             # Download and extract the latest version of Gost 3.x
             wget -O /tmp/gost.tar.gz "$download_url" && \
             tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ && \
             chmod +x /usr/local/bin/gost && \
-            echo $'\e[32mGost installed successfully.\e[0m'
+            echo $'\e[32mGost 3.x installed successfully.\e[0m'
             ;;
         *)
             echo $'\e[31mInvalid choice. Exiting...\e[0m'
