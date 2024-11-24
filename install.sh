@@ -320,7 +320,7 @@ elif [ "$choice" -eq 6 ]; then
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.x (latest)'
 
-    # Read user input for Gost version choice
+    # Read user input for Gost version
     read -p $'\e[97mYour choice: \e[0m' gost_version_choice
 
     # Download and install Gost based on user's choice
@@ -336,30 +336,11 @@ elif [ "$choice" -eq 6 ]; then
             ;;
         2)
             echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
-            
-            # Use the fixed download URL for version 3.0.0-nightly (Ubuntu 20)
-            download_url="https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241122/gost_3.0.0-nightly.20241122_linux_amd64.tar.gz"
-            
-            # Download the file to /tmp and check if it was downloaded correctly
-            echo $'\e[32mDownloading the latest version of Gost 3.x...\e[0m'
-            wget -O /tmp/gost.tar.gz "$download_url"
-            
-            # Check if the file was downloaded successfully
-            if [ ! -f /tmp/gost.tar.gz ]; then
-                echo $'\e[31mError: Download failed. The file was not saved correctly.\e[0m'
-                exit 1
-            fi
-
-            # Check if the file is not empty
-            if [ ! -s /tmp/gost.tar.gz ]; then
-                echo $'\e[31mError: The downloaded file is empty.\e[0m'
-                exit 1
-            fi
-
-            # Extract the downloaded file
+            latest_version=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep 'tag_name' | cut -d\" -f4) && \
+            wget -O /tmp/gost.tar.gz "https://github.com/go-gost/gost/releases/download/$latest_version/gost-linux-amd64-$latest_version.tar.gz" && \
             tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ && \
             chmod +x /usr/local/bin/gost && \
-            echo $'\e[32mGost 3.x installed successfully.\e[0m'
+            echo $'\e[32mGost installed successfully.\e[0m'
             ;;
         *)
             echo $'\e[31mInvalid choice. Exiting...\e[0m'
