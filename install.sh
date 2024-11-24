@@ -315,8 +315,7 @@ EOL
     bash "$0"
     
 # If option 6 is selected
-# If option 6 is selected
-elif [ "$choice" -eq 6 ]; then
+if [ "$choice" -eq 6 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.x (latest)'
