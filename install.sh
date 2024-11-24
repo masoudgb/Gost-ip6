@@ -320,7 +320,7 @@ elif [ "$choice" -eq 6 ]; then
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.x (latest)'
 
-    # Read user input for Gost version
+    # Read user input for Gost version choice
     read -p $'\e[97mYour choice: \e[0m' gost_version_choice
 
     # Download and install Gost based on user's choice
@@ -336,8 +336,15 @@ elif [ "$choice" -eq 6 ]; then
             ;;
         2)
             echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
-            latest_version=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep 'tag_name' | cut -d\" -f4) && \
-            wget -O /tmp/gost.tar.gz "https://github.com/go-gost/gost/releases/download/$latest_version/gost-linux-amd64-$latest_version.tar.gz" && \
+            
+            # Fetch the download URL for the latest 3.x version of Gost
+            download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases | \
+                           grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
+                           grep -E 'v3\.' | \
+                           head -n 1)
+            
+            # Download and extract the latest version of Gost 3.x
+            wget -O /tmp/gost.tar.gz "$download_url" && \
             tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ && \
             chmod +x /usr/local/bin/gost && \
             echo $'\e[32mGost installed successfully.\e[0m'
