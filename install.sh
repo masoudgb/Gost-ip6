@@ -315,7 +315,7 @@ EOL
     bash "$0"
     
 # If option 6 is selected
-if [ "$choice" -eq 6 ]; then
+elif [ "$choice" -eq 6 ]; then
     echo $'\e[32mChoose Gost version:\e[0m'
     echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
     echo $'\e[36m2. \e[0mGost version 3.x (latest)'
@@ -337,26 +337,9 @@ if [ "$choice" -eq 6 ]; then
         2)
             echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
             
-            # Fetch the download URL for the latest 3.x version of Gost (latest or nightly)
-            download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | \
-                           grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
-                           grep -i 'nightly' | \
-                           head -n 1)
-
-            # If no nightly version, fallback to the official release
-            if [ -z "$download_url" ]; then
-                echo $'\e[33mNo nightly version found. Falling back to official release.\e[0m'
-                download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | \
-                               grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
-                               head -n 1)
-            fi
-
-            # Check if a valid URL was fetched
-            if [ -z "$download_url" ]; then
-                echo $'\e[31mError: Could not find the download URL for the latest Gost version.\e[0m'
-                exit 1
-            fi
-
+            # Use the fixed download URL for version 3.0.0-nightly (Ubuntu 20)
+            download_url="https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20241122/gost_3.0.0-nightly.20241122_linux_amd64.tar.gz"
+            
             # Download the file to /tmp and check if it was downloaded correctly
             echo $'\e[32mDownloading the latest version of Gost 3.x...\e[0m'
             wget -O /tmp/gost.tar.gz "$download_url"
