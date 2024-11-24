@@ -337,48 +337,23 @@ if [ "$choice" -eq 6 ]; then
         2)
             echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
             
-            # Fetch the download URL for the latest 3.x version of Gost
-            download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases | \
-                           grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
-                           grep -E 'v3\.' | \
-                           head -n 1)
-            
-            # Check if a valid URL was fetched
-            if [ -z "$download_url" ]; then
-                echo $'\e[31mError: Could not find the download URL for the latest 3.x Gost version.\e[0m'
-                exit 1
-            fi
-# If option 6 is selected
-elif [ "$choice" -eq 6 ]; then
-    echo $'\e[32mChoose Gost version:\e[0m'
-    echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
-    echo $'\e[36m2. \e[0mGost version 3.x (latest)'
-
-    # Read user input for Gost version choice
-    read -p $'\e[97mYour choice: \e[0m' gost_version_choice
-
-    # Download and install Gost based on user's choice
-    case "$gost_version_choice" in
-        1)
-            echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
-            wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
-            echo $'\e[32mGost downloaded successfully.\e[0m' && \
-            gunzip gost-linux-amd64-2.11.5.gz && \
-            sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
-            sudo chmod +x /usr/local/bin/gost && \
-            echo $'\e[32mGost installed successfully.\e[0m'
-            ;;
-        2)
-            echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
-            
-            # Fetch the download URL for the latest 3.x version of Gost (nightly or latest)
+            # Fetch the download URL for the latest 3.x version of Gost (latest or nightly)
             download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | \
                            grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
+                           grep -i 'nightly' | \
                            head -n 1)
-            
+
+            # If no nightly version, fallback to the official release
+            if [ -z "$download_url" ]; then
+                echo $'\e[33mNo nightly version found. Falling back to official release.\e[0m'
+                download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | \
+                               grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
+                               head -n 1)
+            fi
+
             # Check if a valid URL was fetched
             if [ -z "$download_url" ]; then
-                echo $'\e[31mError: Could not find the download URL for the latest 3.x Gost version.\e[0m'
+                echo $'\e[31mError: Could not find the download URL for the latest Gost version.\e[0m'
                 exit 1
             fi
 
