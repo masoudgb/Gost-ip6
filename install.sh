@@ -15,7 +15,7 @@ show_header() {
     echo "                                              "
     echo -e "\e[0m"
     echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-    echo -e "\e[35mGost Ip6 Script v2.7.0\e[0m"
+    echo -e "\e[35mGost Ip6 Script v2.8.0\e[0m"
     echo ""
 }
 
@@ -54,6 +54,13 @@ install_gost2() {
 install_gost3() {
     echo -e "\e[32mInstalling Gost version 3.2.6...\e[0m"
     
+    # ابتدا فایل قبلی را پاک می‌کنیم اگر در حال اجرا باشد
+    if [ -f /usr/local/bin/gost ] && lsof /usr/local/bin/gost >/dev/null 2>&1; then
+        echo -e "\e[33mStopping running Gost processes...\e[0m"
+        systemctl stop gost_*.service 2>/dev/null
+        sleep 2
+    fi
+    
     # Direct download URL for Gost 3.2.6
     download_url="https://github.com/go-gost/gost/releases/download/v3.2.6/gost_3.2.6_linux_amd64.tar.gz"
     
@@ -73,6 +80,9 @@ install_gost3() {
 
     show_animation "Extracting"
     
+    # پاک کردن فایل قبلی قبل از کپی جدید
+    rm -f /usr/local/bin/gost 2>/dev/null
+    
     # Create temp directory for extraction
     temp_dir=$(mktemp -d)
     tar -xvzf /tmp/gost.tar.gz -C "$temp_dir" 2>/dev/null
@@ -81,7 +91,8 @@ install_gost3() {
     gost_binary=$(find "$temp_dir" -type f \( -name "gost" -o -name "gost-*" \) | head -1)
     
     if [ -n "$gost_binary" ] && [ -f "$gost_binary" ]; then
-        cp "$gost_binary" /usr/local/bin/gost
+        # کپی با force
+        cp -f "$gost_binary" /usr/local/bin/gost
         chmod +x /usr/local/bin/gost
         echo -e "\e[32m✓ Gost 3.2.6 installed successfully\e[0m"
     else
@@ -141,25 +152,7 @@ install_gost_version() {
 configure_system() {
     echo -e "\e[32mConfiguring system...\e[0m"
     
-    # Add sysctl configuration (همانند نسخه اول)
-    sysctl net.ipv4.ip_local_port_range="1024 65535" 2>/dev/null
-    echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" >> /etc/rc.local 2>/dev/null
-    
-    # Create sysctl service (همانند نسخه اول)
-    cat <<EOL > /etc/systemd/system/sysctl-custom.service 2>/dev/null
-[Unit]
-Description=Custom sysctl settings
-
-[Service]
-ExecStart=/sbin/sysctl net.ipv4.ip_local_port_range="1024 65535"
-
-[Install]
-WantedBy=multi-user.target
-EOL
-
-    systemctl enable sysctl-custom >/dev/null 2>&1
-    
-    # Update and install dependencies
+    # فقط update و install dependencies - بدون sysctl تنظیمات
     show_animation "Updating packages"
     apt update >/dev/null 2>&1 && apt install -y wget nano curl >/dev/null 2>&1
     
@@ -186,7 +179,7 @@ create_gost_service() {
         safe_ip=$(echo "$destination_ip" | tr '.:' '_')
         service_name="gost_${safe_ip}_$file_index"
         
-        # Create service file - دقیقاً مانند نسخه اول
+        # Create service file
         cat <<EOL > "/etc/systemd/system/${service_name}.service"
 [Unit]
 Description=GO Simple Tunnel
@@ -198,7 +191,7 @@ Type=simple
 Environment="GOST_LOGGER_LEVEL=fatal"
 EOL
 
-        # Build ExecStart command - دقیقاً مانند نسخه اول
+        # Build ExecStart command
         exec_start_command="ExecStart=/usr/local/bin/gost"
         for ((i = file_index * max_ports_per_file; i < (file_index + 1) * max_ports_per_file && i < port_count; i++)); do
             port="${port_array[i]}"
@@ -207,7 +200,7 @@ EOL
 
         echo "$exec_start_command" >> "/etc/systemd/system/${service_name}.service"
 
-        # Add service footer - دقیقاً مانند نسخه اول
+        # Add service footer
         cat <<EOL >> "/etc/systemd/system/${service_name}.service"
 
 [Install]
@@ -257,33 +250,8 @@ setup_tunnel() {
             ;;
     esac
 
-    echo ""
-    echo -e "\e[32mPort options:\e[0m"
-    echo -e "\e[36m1. \e[0mEnter single port or multiple ports (comma separated)"
-    echo -e "\e[36m2. \e[0mEnter port range (e.g., 1000,2000)"
-    echo ""
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" port_option
-
-    case $port_option in
-        1)
-            read -p "$(echo -e '\e[97mPort(s) (comma separated): \e[0m')" ports
-            ;;
-        2)
-            read -p "$(echo -e '\e[97mPort range (start,end): \e[0m')" port_range
-            IFS=',' read -ra range_array <<< "$port_range"
-            if [ ${#range_array[@]} -eq 2 ]; then
-                ports=$(seq -s, "${range_array[0]}" "${range_array[1]}")
-            else
-                echo -e "\e[31mInvalid port range format.\e[0m"
-                return 1
-            fi
-            ;;
-        *)
-            echo -e "\e[31mInvalid choice.\e[0m"
-            return 1
-            ;;
-    esac
+    # فقط پورت دستی - بدون رنج
+    read -p "$(echo -e '\e[97mPort(s) (comma separated): \e[0m')" ports
 
     echo -e "\e[32mSelect the protocol:\e[0m"
     echo -e "\e[36m1. \e[0mTCP"
@@ -312,9 +280,10 @@ setup_tunnel() {
     echo ""
     
     read -p "$(echo -e '\e[97mProceed? (y/n): \e[0m')" confirm
+    
     if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-    echo -e "\e[33mCancelled.\e[0m"
-    return 1
+        echo -e "\e[33mCancelled.\e[0m"
+        return 1
     fi
 
     configure_system
@@ -422,7 +391,7 @@ add_new_ip() {
     echo "══════════════════════════════════════════════════"
     
     read -p "$(echo -e '\e[97mDestination IP: \e[0m')" destination_ip
-    read -p "$(echo -e '\e[97mPorts (separated by commas): \e[0m')" ports
+    read -p "$(echo -e '\e[97mPort(s) (comma separated): \e[0m')" ports
     
     echo -e "\e[32mSelect protocol:\e[0m"
     echo -e "\e[36m1. \e[0mTCP"
@@ -566,12 +535,6 @@ uninstall() {
     rm -f /etc/systemd/system/gost_*.service
     rm -f /usr/local/bin/gost
     rm -rf /etc/gost 2>/dev/null
-    
-    # Also remove sysctl-custom service
-    systemctl stop sysctl-custom 2>/dev/null
-    systemctl disable sysctl-custom 2>/dev/null
-    rm -f /etc/systemd/system/sysctl-custom.service
-    systemctl daemon-reload
     
     rm -f /usr/bin/auto_restart_gost.sh 2>/dev/null
     crontab -l 2>/dev/null | grep -v "gost\|drop_caches" | crontab -
