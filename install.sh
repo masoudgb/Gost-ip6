@@ -2,648 +2,552 @@
 
 # Check if the user has root access
 if [ "$EUID" -ne 0 ]; then
-  echo -e "\e[32mPlease run with root privileges.\e[0m"
+  echo $'\e[32mPlease run with root privileges.\e[0m'
   exit
 fi
 
-show_header() {
-    echo -e "\e[35m"
-    echo "  ___|              |        _ _|  _ \\   /    "
-    echo " |      _ \\    __|  __|        |  |   |  _ \\  "
-    echo " |   | (   | \\__ \\  |          |  ___/  (   | "
-    echo "\\____|\\___/  ____/ \\__|      ___|_|    \\___/  "
-    echo "                                              "
-    echo -e "\e[0m"
-    echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-    echo -e "\e[35mGost Ip6 Script v3.0.1\e[0m"
-    echo ""
-}
+echo $'\e[35m'"  ___|              |        _ _|  _ \   /    
+ |      _ \    __|  __|        |  |   |  _ \  
+ |   | (   | \__ \  |          |  ___/  (   | 
+\____|\___/  ____/ \__|      ___|_|    \___/  
+                                              "$'\e[0m'
 
-show_animation() {
-    local text="$1"
-    echo -ne "\e[32m"
-    echo -n "$text "
-    for i in {1..3}; do
-        echo -n "."
-        sleep 0.3
-    done
-    echo -e "\e[0m"
-}
+echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
+echo $'\e[35m'"Gost Ip6 Script v2.2.0"$'\e[0m'
 
-detect_gost_version() {
-    if [ -f /usr/local/bin/gost ]; then
-        # Try to get version from binary
-        local version_output=$(/usr/local/bin/gost -v 2>&1 | head -1)
-        
-        if [[ "$version_output" == *"3."* ]]; then
-            echo "3"
-        elif /usr/local/bin/gost -h 2>&1 | grep -q "ginuerzh"; then
-            echo "2"
-        else
-            echo "unknown"
-        fi
-    else
-        echo "none"
-    fi
-}
+options=($'\e[36m1. \e[0mGost Tunnel By IP4'
+         $'\e[36m2. \e[0mGost Tunnel By IP6'
+         $'\e[36m3. \e[0mGost Status'
+         $'\e[36m4. \e[0mUpdate Script'
+         $'\e[36m5. \e[0mAdd New IP'
+         $'\e[36m6. \e[0mChange Gost Version'
+         $'\e[36m7. \e[0mAuto Restart Gost'
+         $'\e[36m8. \e[0mAuto Clear Cache'
+         $'\e[36m9. \e[0mInstall BBR'
+         $'\e[36m10. \e[0mUninstall'
+         $'\e[36m11. \e[0mExit')
 
-install_gost2() {
-    echo -e "\e[32mInstalling Gost version 2.11.5...\e[0m"
-    
-    # Stop services
-    systemctl stop gost_*.service 2>/dev/null
-    sleep 1
-    
-    # Download
-    show_animation "Downloading"
-    wget -q https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
-    
-    if [ $? -eq 0 ]; then
-        show_animation "Extracting"
-        gunzip gost-linux-amd64-2.11.5.gz
-        mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
-        chmod +x /usr/local/bin/gost
-        
-        # Verify
-        if /usr/local/bin/gost -h 2>&1 | grep -q "ginuerzh"; then
-            echo -e "\e[32m✓ Gost 2.11.5 installed\e[0m"
-            return 0
-        else
-            echo -e "\e[31m✗ Installation failed\e[0m"
-            return 1
-        fi
-    else
-        echo -e "\e[31m✗ Download failed\e[0m"
-        return 1
-    fi
-}
+# Print prompt and options with cyan color
+printf "\e[32mPlease Choice Your Options:\e[0m\n"
+printf "%s\n" "${options[@]}"
 
-install_gost3() {
-    echo -e "\e[32mInstalling Gost version 3.2.6...\e[0m"
-    
-    # Stop services
-    systemctl stop gost_*.service 2>/dev/null
-    sleep 1
-    
-    # Backup
-    if [ -f /usr/local/bin/gost ]; then
-        cp /usr/local/bin/gost /usr/local/bin/gost.backup.$(date +%s)
-    fi
-    
-    # Download
-    show_animation "Downloading"
-    wget -q -O /tmp/gost.tar.gz \
-        https://github.com/go-gost/gost/releases/download/v3.2.6/gost_3.2.6_linux_amd64.tar.gz
-    
-    if [ $? -ne 0 ]; then
-        # Try alternative
-        wget -q -O /tmp/gost.tar.gz \
-            https://github.com/go-gost/gost/releases/download/v3.2.6/gost-linux-amd64.tar.gz
-    fi
-    
-    if [ ! -s /tmp/gost.tar.gz ]; then
-        echo -e "\e[31m✗ Download failed\e[0m"
-        return 1
-    fi
-    
-    show_animation "Extracting"
-    
-    # Extract directly to target
-    tar -xzf /tmp/gost.tar.gz -C /usr/local/bin/ --strip-components=1 2>/dev/null
-    
-    # If extraction failed, try different approach
-    if [ ! -f /usr/local/bin/gost ]; then
-        tar -xzf /tmp/gost.tar.gz -C /tmp/
-        find /tmp -name "gost" -type f -executable | head -1 | xargs -I {} cp {} /usr/local/bin/gost
-    fi
-    
-    # Set permissions
-    if [ -f /usr/local/bin/gost ]; then
-        chmod +x /usr/local/bin/gost
-        
-        # Verify
-        if /usr/local/bin/gost -v 2>&1 | grep -q "3."; then
-            echo -e "\e[32m✓ Gost 3.2.6 installed\e[0m"
-            rm -f /tmp/gost.tar.gz
-            return 0
-        else
-            echo -e "\e[31m✗ Version verification failed\e[0m"
-            # Restore backup
-            if ls /usr/local/bin/gost.backup.* 2>/dev/null | head -1; then
-                cp /usr/local/bin/gost.backup.* /usr/local/bin/gost 2>/dev/null
-            fi
-            return 1
-        fi
-    else
-        echo -e "\e[31m✗ Binary not found in archive\e[0m"
-        return 1
-    fi
-}
+# Read user input with white color
+read -p $'\e[97mYour choice: \e[0m' choice
 
-install_gost_version() {
-    echo -e "\e[32mChoose Gost version:\e[0m"
-    echo -e "\e[36m1. \e[0mGost 2.11.5 (stable)"
-    echo -e "\e[36m2. \e[0mGost 3.2.6 (latest)"
-    echo -e "\e[36m3. \e[0mCancel"
-    echo ""
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-    
-    case $choice in
-        1)
-            install_gost2
-            ;;
-        2)
-            install_gost3
-            ;;
-        3)
-            return 1
-            ;;
-        *)
-            echo -e "\e[31mInvalid choice\e[0m"
-            return 1
-            ;;
-    esac
-}
-
-configure_system() {
-    echo -e "\e[32mConfiguring system...\e[0m"
-    apt update >/dev/null 2>&1 && apt install -y wget curl tar gzip >/dev/null 2>&1
-    
-    # Create alias
-    if ! grep -q "alias gost=" ~/.bashrc; then
-        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
+# If option 1 or 2 is selected
+if [ "$choice" -eq 1 ] || [ "$choice" -eq 2 ]; then
+    if [ "$choice" -eq 1 ]; then
+        read -p $'\e[97mPlease enter the destination (Kharej) IPv4: \e[0m' destination_ip
+    elif [ "$choice" -eq 2 ]; then
+        read -p $'\e[97mPlease enter the destination (Kharej) IPv6: \e[0m' destination_ip
     fi
-    
-    source ~/.bashrc >/dev/null 2>&1
-    echo -e "\e[32m✓ System configured\e[0m"
-    return 0
-}
 
-create_gost_service() {
-    local destination_ip=$1
-    local ports=$2
-    local protocol=$3
-    
-    # Detect version
-    local version=$(detect_gost_version)
-    if [ "$version" = "none" ] || [ "$version" = "unknown" ]; then
-        echo -e "\e[31m✗ Gost not installed or version unknown\e[0m"
-        return 1
+    read -p $'\e[32mPlease choose one of the options below:\n\e[0m\e[36m1. \e[0mEnter "Manually" Ports\n\e[36m2. \e[0mEnter "Range" Ports\e[32m\nYour choice: \e[0m' port_option
+
+if [ "$port_option" -eq 1 ]; then
+    read -p $'\e[36mPlease enter the desired ports (separated by commas): \e[0m' ports
+elif [ "$port_option" -eq 2 ]; then
+    read -p $'\e[36mPlease enter the port range (e.g., 54,65000): \e[0m' port_range
+
+    IFS=',' read -ra port_array <<< "$port_range"
+
+    # Check if the start and end port values are within the valid range
+    if [ "${port_array[0]}" -lt 54 -o "${port_array[1]}" -gt 65000 ]; then
+        echo $'\e[33mInvalid port range. Please enter a valid range starting from 54 and up to 65000.\e[0m'
+        exit
     fi
-    
-    echo -e "\e[33mUsing Gost version $version\e[0m"
-    
-    # Process ports
-    IFS=',' read -ra port_array <<< "$ports"
-    local port_count=${#port_array[@]}
-    local max_ports=50
-    local file_count=$(( (port_count + max_ports - 1) / max_ports ))
-    
-    for ((file_index = 0; file_index < file_count; file_index++)); do
-        local safe_ip=$(echo "$destination_ip" | tr '.:/' '_')
-        local service_name="gost_${safe_ip}_$((file_index + 1))"
-        
-        # Stop old service
-        systemctl stop "$service_name" 2>/dev/null
-        systemctl disable "$service_name" 2>/dev/null
-        
-        # Create service file
-        cat > "/etc/systemd/system/${service_name}.service" <<EOL
+
+    ports=$(seq -s, "${port_array[0]}" "${port_array[1]}")
+else
+    echo $'\e[31mInvalid option. Exiting...\e[0m'
+    exit
+fi
+
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy "Tcp" Protocol \n\e[36m2. \e[0mBy "Udp" Protocol \n\e[36m3. \e[0mBy "Grpc" Protocol \e[32m\nYour choice: \e[0m' protocol_option
+
+if [ "$protocol_option" -eq 1 ]; then
+    protocol="tcp"
+elif [ "$protocol_option" -eq 2 ]; then
+    protocol="udp"
+elif [ "$protocol_option" -eq 3 ]; then
+    protocol="grpc"
+else
+    echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
+    exit
+fi
+
+    echo $'\e[32mYou chose option\e[0m' $choice
+    echo $'\e[97mDestination IP:\e[0m' $destination_ip
+    echo $'\e[97mPorts:\e[0m' $ports
+    echo $'\e[97mProtocol:\e[0m' $protocol
+
+    # Commands to install and configure Gost
+    echo $'\e[32mUpdating system packages, please wait...\e[0m'
+    sysctl net.ipv4.ip_local_port_range="1024 65535"
+# Add the sysctl command to the end of the script
+echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" >> /etc/rc.local
+
+# Enable the systemd service to run the sysctl command after reboot
+cat <<EOL > /etc/systemd/system/sysctl-custom.service
 [Unit]
-Description=Gost Tunnel ${service_name}
-After=network.target
+Description=Custom sysctl settings
 
 [Service]
-Type=simple
-Restart=always
-RestartSec=3
-User=root
-EOL
-        
-        # Build command based on version
-        local exec_start="ExecStart=/usr/local/bin/gost"
-        local port_list=""
-        
-        for ((i = file_index * max_ports; i < (file_index + 1) * max_ports && i < port_count; i++)); do
-            local port="${port_array[i]}"
-            port=$(echo "$port" | xargs)
-            
-            if [[ "$port" =~ ^[0-9]+$ ]]; then
-                if [ "$version" = "3" ]; then
-                    # Gost 3 syntax
-                    exec_start+=" -L :$port -F ${protocol}://[$destination_ip]:$port"
-                else
-                    # Gost 2 syntax
-                    exec_start+=" -L=${protocol}://:$port/[$destination_ip]:$port"
-                fi
-                port_list+="$port,"
-            fi
-        done
-        
-        # Remove trailing comma
-        port_list=${port_list%,}
-        
-        if [ -z "$port_list" ]; then
-            rm -f "/etc/systemd/system/${service_name}.service"
-            continue
-        fi
-        
-        echo "$exec_start" >> "/etc/systemd/system/${service_name}.service"
-        
-        # Add footer
-        cat >> "/etc/systemd/system/${service_name}.service" <<EOL
+ExecStart=/sbin/sysctl net.ipv4.ip_local_port_range="1024 65535"
 
 [Install]
 WantedBy=multi-user.target
 EOL
-        
-        # Enable and start
-        systemctl daemon-reload
-        systemctl enable "$service_name" >/dev/null 2>&1
-        systemctl start "$service_name" >/dev/null 2>&1
-        
-        sleep 2
-        if systemctl is-active --quiet "$service_name"; then
-            echo -e "\e[32m✓ Service $service_name started (ports: $port_list)\e[0m"
-        else
-            echo -e "\e[31m✗ Service $service_name failed\e[0m"
-            journalctl -u "$service_name" -n 5 --no-pager
-        fi
-    done
-    
-    systemctl daemon-reload
-    echo -e "\e[32m✓ Services created\e[0m"
-    return 0
-}
+# Enable the service
+systemctl enable sysctl-custom
 
-setup_tunnel() {
-    # Install or check Gost
-    local version=$(detect_gost_version)
-    if [ "$version" = "none" ] || [ "$version" = "unknown" ]; then
-        echo -e "\e[33mGost not detected. Installing...\e[0m"
-        install_gost_version
-        if [ $? -ne 0 ]; then
-            return 1
+    apt update && sudo apt install wget nano -y && \
+    # Add alias for 'gost' to execute the script
+        echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
+        source ~/.bashrc
+        echo $'\e[32mSymbolic link created: /usr/local/bin/gost\e[0m'
+    echo $'\e[32mSystem update completed.\e[0m'
+    # Prompt user to choose Gost version
+    echo $'\e[32mChoose Gost version:\e[0m'
+    echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
+    echo $'\e[36m2. \e[0mGost version 3.0.0 (latest)'
+
+    # Read user input for Gost version
+    read -p $'\e[97mYour choice: \e[0m' gost_version_choice
+
+# Download and install Gost based on user's choice
+if [ "$gost_version_choice" -eq 1 ]; then
+    echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
+    wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
+    echo $'\e[32mGost downloaded successfully.\e[0m' && \
+    gunzip gost-linux-amd64-2.11.5.gz && \
+    sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
+    sudo chmod +x /usr/local/bin/gost && \
+    echo $'\e[32mGost installed successfully.\e[0m'
+else
+    if [ "$gost_version_choice" -eq 2 ]; then
+        echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m'
+        
+        # Use the direct download link for Gost 3.0.0
+        download_url="https://github.com/go-gost/gost/releases/download/v3.0.0/gost_3.0.0_linux_amd64.tar.gz"
+
+        # Download the file to /tmp and check if it was downloaded correctly
+        echo $'\e[32mDownloading Gost 3.0.0...\e[0m'
+        wget -O /tmp/gost.tar.gz "$download_url"
+        
+        # Check if the file was downloaded successfully
+        if [ ! -f /tmp/gost.tar.gz ]; then
+            echo $'\e[31mError: Download failed. The file was not saved correctly.\e[0m'
+            exit 1
         fi
+
+        # Check if the file is not empty
+        if [ ! -s /tmp/gost.tar.gz ]; then
+            echo $'\e[31mError: The downloaded file is empty.\e[0m'
+            exit 1
+        fi
+
+        # Extract the downloaded file
+        tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/
+        chmod +x /usr/local/bin/gost
+        echo $'\e[32mGost 3.0.0 installed successfully.\e[0m'
+    else
+        echo $'\e[31mInvalid choice. Exiting...\e[0m'
+        exit
     fi
+fi
+
+    # Continue creating the systemd service file
+    exec_start_command="ExecStart=/usr/local/bin/gost"
+
+    # Add lines for each port
+    IFS=',' read -ra port_array <<< "$ports"
+    port_count=${#port_array[@]}
+
+    # Set the maximum number of ports per file
+    max_ports_per_file=12000
+
+    # Calculate the number of files needed
+    file_count=$(( (port_count + max_ports_per_file - 1) / max_ports_per_file ))
+
+    # Continue creating the systemd service files
+    for ((file_index = 0; file_index < file_count; file_index++)); do
+        # Create a new systemd service file
+        cat <<EOL | sudo tee "/usr/lib/systemd/system/gost_$file_index.service" > /dev/null
+[Unit]
+Description=GO Simple Tunnel
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+Environment="GOST_LOGGER_LEVEL=fatal"
+EOL
+
+        # Add lines for each port in the current file
+        exec_start_command="ExecStart=/usr/local/bin/gost"
+        for ((i = file_index * max_ports_per_file; i < (file_index + 1) * max_ports_per_file && i < port_count; i++)); do
+            port="${port_array[i]}"
+            exec_start_command+=" -L=$protocol://:$port/[$destination_ip]:$port"
+        done
+
+        # Append the ExecStart command to the current file
+        echo "$exec_start_command" | sudo tee -a "/usr/lib/systemd/system/gost_$file_index.service" > /dev/null
+
+        # Complete the current systemd service file
+        cat <<EOL | sudo tee -a "/usr/lib/systemd/system/gost_$file_index.service" > /dev/null
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+        # Reload and restart the systemd service
+        sudo systemctl enable "gost_$file_index.service"
+        sudo systemctl start "gost_$file_index.service"
+        sudo systemctl daemon-reload
+        sudo systemctl restart "gost_$file_index.service"
+    done
+
+echo $'\e[32mGost configuration applied successfully.\e[0m'
     
-    echo ""
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mTunnel Setup\e[0m"
-    echo -e "\e[36m1. \e[0mIPv4 Tunnel"
-    echo -e "\e[36m2. \e[0mIPv6 Tunnel"
-    echo "══════════════════════════════════════════════════"
+# If option 3 is selected
+elif [ "$choice" -eq 3 ]; then
+    # Check if Gost is installed
+    if command -v gost &>/dev/null; then
+        echo $'\e[32mGost is installed. Checking configuration and status...\e[0m'
+        
+        # Check Gost configuration and status
+        systemctl list-unit-files | grep -q "gost_"
+        if [ $? -eq 0 ]; then
+            echo $'\e[32mGost is configured and active.\e[0m'
+            
+            # Get and display used IPs and ports
+            for service_file in /usr/lib/systemd/system/gost_*.service; do
+                # Extract the IP, port, and protocol information using awk
+                service_info=$(awk -F'[-=:/\\[\\]]+' '/ExecStart=/ {print $14,$15,$22,$20,$23}' "$service_file")
+
+                # Split the extracted information into an array
+                read -a info_array <<< "$service_info"
+
+                # Display IP, port, and protocol information with corrected port range
+                echo -e "\e[97mIP:\e[0m ${info_array[0]} \e[97mPort:\e[0m ${info_array[1]},... \e[97mProtocol:\e[0m ${info_array[2]}"
+
+            done
+        else
+            echo $'\e[33mGost is installed, but not configured or active.\e[0m'
+        fi
+    else
+        echo $'\e[33mGost Tunnel is not installed. \e[0m'
+    fi
+
+    read -n 1 -s -r -p $'\e[36m0. \e[0mBack to menu: \e[0m' choice
+
+if [ "$choice" -eq 0 ]; then
+    bash "$0"
+fi
+
+# If option 4 is selected
+elif [ "$choice" -eq 4 ]; then
+    read -p $'\e[32mDo you want to update Gost script? (y/n): \e[0m' update_choice
+
+    if [ "$update_choice" == "y" ]; then
+        echo $'\e[32mUpdating Gost, please wait...\e[0m'
+        # Save install.sh in /etc/gost directory
+        sudo mkdir -p /etc/gost
+wget -O /etc/gost/install.sh https://github.com/masoudgb/Gost-ip6/raw/main/install.sh
+chmod +x /etc/gost/install.sh
+        echo $'\e[32mUpdate completed.\e[0m'
+    else
+        echo $'\e[32mUpdate canceled.\e[0m'
+    fi
+
+    bash "$0"
+fi
+
+# If option 5 is selected
+if [ "$choice" -eq 5 ]; then
+    read -p $'\e[97mPlease enter the new destination (Kharej) IP 4 or 6: \e[0m' destination_ip
+    read -p $'\e[36mPlease enter the new port (separated by commas): \e[0m' port
+    read -p $'\e[32mSelect the protocol:\n\e[0m\e[36m1. \e[0mBy Tcp Protocol \n\e[36m2. \e[0mBy Grpc Protocol \e[32m\nYour choice: \e[0m' protocol_option
+
+    if [ "$protocol_option" -eq 1 ]; then
+        protocol="tcp"
+    elif [ "$protocol_option" -eq 2 ]; then
+        protocol="grpc"
+    else
+        echo $'\e[31mInvalid protocol option. Exiting...\e[0m'
+        exit
+    fi
+
+    # Use the default protocol previously entered
+    echo $'\e[32mYou chose option\e[0m' $choice
+    echo $'\e[97mDestination IP:\e[0m' $destination_ip
+    echo $'\e[97mPort(s):\e[0m' $port
+    echo $'\e[97mProtocol:\e[0m' $protocol
+
+    # Create the systemd service file
+    cat <<EOL | sudo tee "/usr/lib/systemd/system/gost_$destination_ip.service" > /dev/null
+[Unit]
+Description=GO Simple Tunnel
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+Environment="GOST_LOGGER_LEVEL=fatal"
+EOL
+
+    # Add lines for each port
+    IFS=',' read -ra port_array <<< "$port"
+    port_count=${#port_array[@]}
+
+    # Set the maximum number of ports per file
+    max_ports_per_file=12000
+
+    # Calculate the number of files needed
+    file_count=$(( (port_count + max_ports_per_file - 1) / max_ports_per_file ))
+
+    for ((file_index = 0; file_index < file_count; file_index++)); do
+        # Add lines for each port in the current file
+        exec_start_command="ExecStart=/usr/local/bin/gost"
+        for ((i = file_index * max_ports_per_file; i < (file_index + 1) * max_ports_per_file && i < port_count; i++)); do
+            port="${port_array[i]}"
+            exec_start_command+=" -L=$protocol://:$port/[$destination_ip]:$port"
+        done
+
+        # Append the ExecStart command to the current file
+        echo "$exec_start_command" | sudo tee -a "/usr/lib/systemd/system/gost_$destination_ip.service" > /dev/null
+    done
+
+    # Complete the systemd service file
+    cat <<EOL | sudo tee -a "/usr/lib/systemd/system/gost_$destination_ip.service" > /dev/null
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+    # Reload and restart the systemd service
+    sudo systemctl enable "gost_$destination_ip.service"
+    sudo systemctl start "gost_$destination_ip.service"
+    sudo systemctl daemon-reload
+    sudo systemctl restart "gost_$destination_ip.service"
     
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" tunnel_type
+    echo $'\e[32mGost configuration applied successfully.\e[0m'
+    bash "$0"
     
-    case $tunnel_type in
+ # If option 6 is selected
+elif [ "$choice" -eq 6 ]; then
+    echo $'\e[32mChoose Gost version:\e[0m'
+    echo $'\e[36m1. \e[0mGost version 2.11.5 (official)'
+    echo $'\e[36m2. \e[0mGost version 3.x (latest)'
+
+    # Read user input for Gost version choice
+    read -p $'\e[97mYour choice: \e[0m' gost_version_choice
+
+    # Download and install Gost based on user's choice
+    case "$gost_version_choice" in
         1)
-            read -p "$(echo -e '\e[97mDestination IPv4: \e[0m')" destination_ip
+            echo $'\e[32mInstalling Gost version 2.11.5, please wait...\e[0m' && \
+            wget https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz && \
+            echo $'\e[32mGost downloaded successfully.\e[0m' && \
+            gunzip gost-linux-amd64-2.11.5.gz && \
+            sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost && \
+            sudo chmod +x /usr/local/bin/gost && \
+            echo $'\e[32mGost installed successfully.\e[0m'
             ;;
         2)
-            read -p "$(echo -e '\e[97mDestination IPv6: \e[0m')" destination_ip
+            echo $'\e[32mInstalling the latest Gost version 3.x, please wait...\e[0m' && \
+            
+            # Fetch the download URL for the latest 3.x version of Gost
+            download_url=$(curl -s https://api.github.com/repos/go-gost/gost/releases | \
+                           grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | \
+                           grep -E 'v3\.' | \
+                           head -n 1)
+            
+            # Check if a valid URL was fetched
+            if [ -z "$download_url" ]; then
+                echo $'\e[31mError: Could not find the download URL for the latest 3.x Gost version.\e[0m'
+                exit 1
+            fi
+
+            # Download the file to /tmp and check if it was downloaded correctly
+            echo $'\e[32mDownloading the latest version of Gost 3.x...\e[0m'
+            wget -O /tmp/gost.tar.gz "$download_url"
+            
+            # Check if the file was downloaded successfully
+            if [ ! -f /tmp/gost.tar.gz ]; then
+                echo $'\e[31mError: Download failed. The file was not saved correctly.\e[0m'
+                exit 1
+            fi
+
+            # Check if the file is not empty
+            if [ ! -s /tmp/gost.tar.gz ]; then
+                echo $'\e[31mError: The downloaded file is empty.\e[0m'
+                exit 1
+            fi
+
+            # Extract the downloaded file
+            tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ && \
+            chmod +x /usr/local/bin/gost && \
+            echo $'\e[32mGost 3.x installed successfully.\e[0m'
             ;;
         *)
-            echo -e "\e[31mInvalid choice\e[0m"
-            return 1
+            echo $'\e[31mInvalid choice. Exiting...\e[0m'
+            exit
             ;;
     esac
+    bash "$0"
     
-    read -p "$(echo -e '\e[97mPort(s) (comma separated): \e[0m')" ports
-    
-    echo -e "\e[32mSelect protocol:\e[0m"
-    echo -e "\e[36m1. \e[0mTCP"
-    echo -e "\e[36m2. \e[0mUDP"
-    echo -e "\e[36m3. \e[0mgRPC"
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" protocol_choice
-    
-    case $protocol_choice in
-        1) protocol="tcp" ;;
-        2) protocol="udp" ;;
-        3) protocol="grpc" ;;
-        *) protocol="tcp" ;;
-    esac
-    
-    # Show summary
-    echo ""
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mSummary:\e[0m"
-    echo -e "\e[97mDestination:\e[0m $destination_ip"
-    echo -e "\e[97mPorts:\e[0m $ports"
-    echo -e "\e[97mProtocol:\e[0m $protocol"
-    echo -e "\e[97mGost Version:\e[0m $(detect_gost_version)"
-    echo "══════════════════════════════════════════════════"
-    
-    read -p "$(echo -e '\e[97mProceed? (y/n): \e[0m')" confirm
-    
-    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-        echo -e "\e[33mCancelled\e[0m"
-        return 1
-    fi
-    
-    configure_system
-    create_gost_service "$destination_ip" "$ports" "$protocol"
-    
-    echo ""
-    echo -e "\e[32m✓ Tunnel setup completed\e[0m"
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-    return 0
-}
+# If option 7 is selected
+elif [ "$choice" -eq 7 ]; then
+    echo $'\e[32mChoose Auto Restart option:\e[0m'
+    echo $'\e[36m1. \e[0mEnable Auto Restart'
+    echo $'\e[36m2. \e[0mDisable Auto Restart'
 
-show_status() {
-    clear
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mSYSTEM STATUS\e[0m"
-    echo "══════════════════════════════════════════════════"
-    
-    # Gost info
-    local version=$(detect_gost_version)
-    if [ "$version" = "none" ]; then
-        echo -e "\e[31m✗ Gost not installed\e[0m"
-    else
-        echo -e "\e[32m✓ Gost installed (v$version)\e[0m"
-    fi
-    
-    # Services
-    echo ""
-    echo -e "\e[32mActive Tunnels:\e[0m"
-    echo "──────────────────────────────────────"
-    
-    local active_count=0
-    for service in /etc/systemd/system/gost_*.service; do
-        [ -e "$service" ] || continue
-        
-        local service_name=$(basename "$service" .service)
-        local status=$(systemctl is-active "$service_name" 2>/dev/null)
-        
-        if [ "$status" = "active" ]; then
-            ((active_count++))
-            
-            # Extract info
-            local ip=$(echo "$service_name" | sed 's/gost_//' | sed 's/_[0-9]*$//' | tr '_' '.')
-            local ports=$(grep -o ":[0-9]\+" "$service" | tr -d ':' | tr '\n' ',' | sed 's/,$//')
-            local protocol=$(grep -o "tcp\|udp\|grpc" "$service" | head -1)
-            
-            echo -e "\e[97mService:\e[0m $service_name"
-            echo -e "\e[97mStatus:\e[0m \e[32m$status\e[0m"
-            echo -e "\e[97mIP:\e[0m $ip"
-            echo -e "\e[97mPorts:\e[0m $ports"
-            echo -e "\e[97mProtocol:\e[0m $protocol"
-            echo "──────────────────────────────────────"
-        fi
-    done
-    
-    if [ $active_count -eq 0 ]; then
-        echo -e "\e[33mNo active tunnels\e[0m"
-    else
-        echo -e "\e[32mTotal active: $active_count\e[0m"
-    fi
-    
-    # Listening ports
-    echo ""
-    echo -e "\e[32mListening Ports:\e[0m"
-    ss -tulpn 2>/dev/null | grep -E ":(8080|8443|443|80|1080)" | head -10
-    
-    echo ""
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-}
+    # Read user input for Auto Restart option
+    read -p $'\e[97mYour choice: \e[0m' auto_restart_option
 
-update_script() {
-    echo -e "\e[32mUpdating script...\e[0m"
-    
-    # Backup
-    if [ -f /etc/gost/install.sh ]; then
-        cp /etc/gost/install.sh /etc/gost/install.sh.backup
-    fi
-    
-    # Download
-    if wget -O /etc/gost/install.sh \
-        https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh; then
-        chmod +x /etc/gost/install.sh
-        echo -e "\e[32m✓ Update completed\e[0m"
-        sleep 2
-        exec bash /etc/gost/install.sh
-    else
-        echo -e "\e[31m✗ Update failed\e[0m"
-        sleep 2
-    fi
-}
-
-add_new_ip() {
-    clear
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mADD NEW TUNNEL\e[0m"
-    echo "══════════════════════════════════════════════════"
-    
-    read -p "$(echo -e '\e[97mDestination IP: \e[0m')" destination_ip
-    read -p "$(echo -e '\e[97mPort(s): \e[0m')" ports
-    
-    echo -e "\e[32mProtocol:\e[0m"
-    echo -e "\e[36m1. \e[0mTCP"
-    echo -e "\e[36m2. \e[0mUDP"
-    echo -e "\e[36m3. \e[0mgRPC"
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-    
-    case $choice in
-        1) protocol="tcp" ;;
-        2) protocol="udp" ;;
-        3) protocol="grpc" ;;
-        *) protocol="tcp" ;;
-    esac
-    
-    create_gost_service "$destination_ip" "$ports" "$protocol"
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-}
-
-fix_services() {
-    clear
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mFIX SERVICES\e[0m"
-    echo "══════════════════════════════════════════════════"
-    
-    echo -e "\e[36m1. \e[0mRestart all services"
-    echo -e "\e[36m2. \e[0mStop all services"
-    echo -e "\e[36m3. \e[0mCheck service logs"
-    echo -e "\e[36m4. \e[0mBack"
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-    
-    case $choice in
+    # Process user choice for Auto Restart
+    case "$auto_restart_option" in
         1)
-            systemctl restart gost_*.service
-            echo -e "\e[32m✓ Services restarted\e[0m"
+            # Logic to enable Auto Restart
+            echo $'\e[32mAuto Restart Enabled.\e[0m'
+            # Remove any existing scheduled restart using 'at' command
+            sudo at -l | awk '{print $1}' | xargs -I {} atrm {}
+            # Prompt the user for the restart time in hours
+            read -p $'\e[97mEnter the restart time in hours: \e[0m' restart_time_hours
+
+            # Convert hours to minutes
+            restart_time_minutes=$((restart_time_hours * 60))
+
+            # Write a script to restart Gost
+            echo -e "#!/bin/bash\n\nsudo systemctl daemon-reload\nsudo systemctl restart gost_*.service" | sudo tee /usr/bin/auto_restart_cronjob.sh > /dev/null
+
+            # Give execute permission to the script
+            sudo chmod +x /usr/bin/auto_restart_cronjob.sh
+
+            # Remove any existing cron job for Auto Restart
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            # Write a new cron job to execute the script at the specified intervals
+            (crontab -l ; echo "0 */$restart_time_hours * * * /usr/bin/auto_restart_cronjob.sh") | crontab -
+
+            echo $'\e[32mAuto Restart scheduled successfully.\e[0m'
             ;;
         2)
-            systemctl stop gost_*.service
-            echo -e "\e[32m✓ Services stopped\e[0m"
+            # Logic to disable Auto Restart
+            echo $'\e[32mAuto Restart Disabled.\e[0m'
+            # Remove the script and cron job for Auto Restart
+            sudo rm -f /usr/bin/auto_restart_cronjob.sh
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            echo $'\e[32mAuto Restart disabled successfully.\e[0m'
             ;;
-        3)
-            echo -e "\e[33mRecent logs:\e[0m"
-            journalctl -u gost_* --no-pager -n 20 | tail -20
-            ;;
-        4)
-            return
+        *)
+            echo $'\e[31mInvalid choice. Exiting...\e[0m'
+            exit
             ;;
     esac
-    
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-}
+ bash "$0"
+fi
 
-auto_restart() {
-    clear
-    echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mAUTO RESTART\e[0m"
-    echo "══════════════════════════════════════════════════"
-    
-    echo -e "\e[36m1. \e[0mEnable"
-    echo -e "\e[36m2. \e[0mDisable"
-    
-    read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-    
-    case $choice in
+# If option 8 is selected
+if [ "$choice" -eq 8 ]; then
+    echo $'\e[32mChoose Auto Clear Cache option:\e[0m'
+    echo $'\e[36m1. \e[0mEnable Auto Clear Cache'
+    echo $'\e[36m2. \e[0mDisable Auto Clear Cache'
+
+    # Read user input for Auto Clear Cache option
+    read -p $'\e[97mYour choice: \e[0m' auto_clear_cache_option
+
+    # Process user choice for Auto Clear Cache
+    case "$auto_clear_cache_option" in
         1)
-            read -p "$(echo -e '\e[97mInterval (hours): \e[0m')" interval
-            echo "0 */$interval * * * systemctl restart gost_*.service" | crontab -
-            echo -e "\e[32m✓ Auto-restart enabled\e[0m"
+            # Enable Auto Clear Cache
+            enable_auto_clear_cache() {
+                echo $'\e[32mAuto Clear Cache Enabled.\e[0m'
+                
+                # Prompt user to choose the interval in days
+                read -p $'\e[97mEnter the interval in days (e.g., 1 for daily, 7 for weekly): \e[0m' interval_days
+                
+                # Set up the cron job based on the interval
+                cron_interval="0 0 */$interval_days * *"
+
+                # Write a new cron job to execute the cache clearing commands at the specified interval
+                (crontab -l 2>/dev/null; echo "$cron_interval sync; echo 1 > /proc/sys/vm/drop_caches && sync; echo 2 > /proc/sys/vm/drop_caches && sync; echo 3 > /proc/sys/vm/drop_caches") | crontab -
+
+                echo $'\e[32mAuto Clear Cache scheduled successfully.\e[0m'
+            }
+
+            # Call the function to enable Auto Clear Cache
+            enable_auto_clear_cache
             ;;
         2)
-            crontab -l | grep -v "gost" | crontab -
-            echo -e "\e[32m✓ Auto-restart disabled\e[0m"
+            # Disable Auto Clear Cache
+            disable_auto_clear_cache() {
+                echo $'\e[32mAuto Clear Cache Disabled.\e[0m'
+                
+                # Remove only the cron job related to auto clearing cache
+                crontab -l | grep -v "drop_caches" | crontab -
+
+                echo $'\e[32mAuto Clear Cache disabled successfully.\e[0m'
+            }
+
+            # Call the function to disable Auto Clear Cache
+            disable_auto_clear_cache
+            ;;
+        *)
+            echo $'\e[31mInvalid choice. Exiting...\e[0m'
+            exit
             ;;
     esac
-    
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-}
+ bash "$0"
+fi
 
-uninstall() {
-    clear
-    echo -e "\e[91m╔════════════════════════════════════════════════╗"
-    echo -e "\e[91m║               UNINSTALL GOST                  ║"
-    echo -e "\e[91m╚════════════════════════════════════════════════╝"
-    
-    read -p "$(echo -e '\e[97mType UNINSTALL to confirm: \e[0m')" confirm
-    
-    if [ "$confirm" != "UNINSTALL" ]; then
-        echo -e "\e[33mCancelled\e[0m"
-        return
+# If option 9 is selected
+if [ "$choice" -eq 9 ]; then
+    echo $'\e[32mInstalling BBR, please wait...\e[0m' && \
+    wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && \
+    chmod +x bbr.sh && \
+    bash bbr.sh
+    bash "$0"
+
+# If option 10 is selected
+elif [ "$choice" -eq 10 ]; then
+    # Prompt the user for confirmation
+    read -p $'\e[91mWarning\e[33m: This will uninstall Gost and remove all related data. Are you sure you want to continue? (y/n): ' uninstall_confirm
+
+    # Check user confirmation
+    if [ "$uninstall_confirm" == "y" ]; then
+        # Countdown for uninstallation in a single line
+        echo $'\e[32mUninstalling Gost in 3 seconds... \e[0m' && sleep 1 && echo $'\e[32m2... \e[0m' && sleep 1 && echo $'\e[32m1... \e[0m' && sleep 1 && {
+            # Remove the auto_restart_cronjob.sh script
+            sudo rm -f /usr/bin/auto_restart_cronjob.sh
+
+            # Remove the cron job for Auto Restart
+            crontab -l | grep -v '/usr/bin/auto_restart_cronjob.sh' | crontab -
+
+            # Continue with the rest of the uninstallation process
+            sudo systemctl daemon-reload
+            sudo systemctl stop gost_*.service
+            sudo rm -f /usr/local/bin/gost
+            sudo rm -rf /etc/gost
+            sudo rm -f /usr/lib/systemd/system/gost_*.service
+            sudo rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
+            systemctl stop sysctl-custom
+            systemctl disable sysctl-custom
+            sudo rm -f /etc/systemd/system/sysctl-custom.service
+            sudo rm -f /etc/systemd/system/multi-user.target.wants/sysctl-custom.service
+            systemctl daemon-reload
+            
+            echo $'\e[32mGost successfully uninstalled.\e[0m'
+        }
+    else
+        echo $'\e[32mUninstallation canceled.\e[0m'
     fi
     
-    echo -e "\e[33mUninstalling...\e[0m"
-    
-    # Stop services
-    systemctl stop gost_*.service 2>/dev/null
-    systemctl disable gost_*.service 2>/dev/null
-    
-    # Remove files
-    rm -f /etc/systemd/system/gost_*.service
-    rm -f /usr/local/bin/gost
-    rm -rf /etc/gost 2>/dev/null
-    
-    # Clean cron
-    crontab -l | grep -v "gost" | crontab -
-    
-    echo -e "\e[32m✓ Gost uninstalled\e[0m"
-    read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-}
-
-config_menu() {
-    while true; do
-        clear
-        echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mCONFIGURATION\e[0m"
-        echo "══════════════════════════════════════════════════"
-        echo -e "\e[36m1. \e[0mAdd New Tunnel"
-        echo -e "\e[36m2. \e[0mChange Gost Version"
-        echo -e "\e[36m3. \e[0mFix Services"
-        echo -e "\e[36m4. \e[0mAuto Restart"
-        echo -e "\e[36m5. \e[0mBack"
-        echo "══════════════════════════════════════════════════"
-        
-        read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-        
-        case $choice in
-            1) add_new_ip ;;
-            2) 
-                install_gost_version
-                read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
-                ;;
-            3) fix_services ;;
-            4) auto_restart ;;
-            5) return ;;
-            *) echo -e "\e[31mInvalid choice\e[0m"; sleep 1 ;;
-        esac
-    done
-}
-
-tools_menu() {
-    while true; do
-        clear
-        echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mTOOLS\e[0m"
-        echo "══════════════════════════════════════════════════"
-        echo -e "\e[36m1. \e[0mUpdate Script"
-        echo -e "\e[36m2. \e[0mUninstall"
-        echo -e "\e[36m3. \e[0mBack"
-        echo "══════════════════════════════════════════════════"
-        
-        read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-        
-        case $choice in
-            1) update_script ;;
-            2) uninstall ;;
-            3) return ;;
-            *) echo -e "\e[31mInvalid choice\e[0m"; sleep 1 ;;
-        esac
-    done
-}
-
-main_menu() {
-    while true; do
-        clear
-        show_header
-        
-        # Show version
-        local version=$(detect_gost_version)
-        if [ "$version" = "none" ]; then
-            echo -e "\e[31m⚠ Gost not installed\e[0m"
-        else
-            echo -e "\e[32m✓ Gost v$version installed\e[0m"
-        fi
-        
-        echo ""
-        echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mMAIN MENU\e[0m"
-        echo -e "\e[36m1. \e[0mSetup Tunnel"
-        echo -e "\e[36m2. \e[0mSystem Status"
-        echo -e "\e[36m3. \e[0mConfiguration"
-        echo -e "\e[36m4. \e[0mTools"
-        echo -e "\e[36m5. \e[0mExit"
-        echo "══════════════════════════════════════════════════"
-        
-        read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
-        
-        case $choice in
-            1) setup_tunnel ;;
-            2) show_status ;;
-            3) config_menu ;;
-            4) tools_menu ;;
-            5) 
-                echo -e "\e[32mGoodbye!\e[0m"
-                exit 0
-                ;;
-            *) 
-                echo -e "\e[31mInvalid choice\e[0m"
-                sleep 1
-                ;;
-        esac
-    done
-}
-
-# Create directory
-mkdir -p /etc/gost
-
-# Start
-main_menu
+# If option 11 is selected
+elif [ "$choice" -eq 11 ]; then
+    echo $'\e[32mYou have exited the script.\e[0m'
+    exit
+fi
