@@ -398,7 +398,7 @@ show_status() {
         echo ""
         echo $'\e[32mTunnel details:\e[0m'
         
-        for service_file in /etc/systemd/system/gost_*.service 2>/dev/null; do
+        for service_file in /etc/systemd/system/gost_*.service; do
             [ -e "$service_file" ] || continue
             
             service_name=$(basename "$service_file" .service)
