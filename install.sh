@@ -15,56 +15,8 @@ show_header() {
     echo "                                              "
     echo -e "\e[0m"
     echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-    echo -e "\e[35mGost Ip6 Script v2.4.0\e[0m"
+    echo -e "\e[35mGost Ip6 Script v2.5.0\e[0m"
     echo ""
-}
-
-get_gost3_versions() {
-    echo -e "\e[32mFetching available Gost 3 versions...\e[0m"
-    
-    versions_json=$(curl -s "https://api.github.com/repos/go-gost/gost/releases?per_page=10")
-    
-    if [ -z "$versions_json" ] || [ "$versions_json" == "[]" ]; then
-        echo -e "\e[31mError: Could not fetch versions from GitHub.\e[0m"
-        return 1
-    fi
-    
-    versions=()
-    i=1
-    while IFS= read -r version; do
-        if [ -n "$version" ]; then
-            versions[$i]="$version"
-            echo -e "\e[36m$i. \e[0mGost $version"
-            ((i++))
-        fi
-    done < <(echo "$versions_json" | grep -oP '"tag_name": "\K([^"]+)' | head -10)
-    
-    echo ""
-    read -p "$(echo -e '\e[97mSelect version (1-10, or 0 for latest stable): \e[0m')" version_choice
-    
-    if [[ "$version_choice" =~ ^[0-9]+$ ]] && [ "$version_choice" -ge 0 ] && [ "$version_choice" -le 10 ]; then
-        if [ "$version_choice" -eq 0 ]; then
-            selected_version=$(echo "$versions_json" | grep -oP '"tag_name": "\K([^"]+)' | head -1)
-            echo -e "\e[32mSelected: Latest stable version\e[0m"
-        else
-            selected_version="${versions[$version_choice]}"
-            echo -e "\e[32mSelected:\e[0m Gost $selected_version"
-        fi
-        
-        download_url=$(echo "$versions_json" | grep -B2 "$selected_version" | grep -oP '"browser_download_url": "\K(.*?linux.*?\.tar\.gz)(?=")' | head -1)
-        
-        if [ -z "$download_url" ]; then
-            download_url="https://github.com/go-gost/gost/releases/download/${selected_version}/gost_linux_amd64.tar.gz"
-        fi
-        
-        echo "$selected_version" > /tmp/gost_selected_version
-        echo "$download_url" > /tmp/gost_download_url
-        
-        return 0
-    else
-        echo -e "\e[31mInvalid selection.\e[0m"
-        return 1
-    fi
 }
 
 install_gost2() {
@@ -83,83 +35,66 @@ install_gost2() {
 }
 
 install_gost3() {
-    echo -e "\e[32mInstalling selected Gost 3 version, please wait...\e[0m"
+    echo -e "\e[32mInstalling Gost version 3.2.6, please wait...\e[0m"
     
-    if [ ! -f /tmp/gost_download_url ] || [ ! -f /tmp/gost_selected_version ]; then
-        echo -e "\e[31mError: Version information not found.\e[0m"
-        get_gost3_versions
-        if [ $? -ne 0 ]; then
-            return 1
-        fi
-    fi
+    # Direct download URL for Gost 3.2.6
+    download_url="https://github.com/go-gost/gost/releases/download/v3.2.6/gost_3.2.6_linux_amd64.tar.gz"
     
-    download_url=$(cat /tmp/gost_download_url)
-    selected_version=$(cat /tmp/gost_selected_version)
-    
-    echo -e "\e[32mDownloading:\e[0m Gost $selected_version"
-    echo -e "\e[32mFrom URL:\e[0m $download_url"
+    echo -e "\e[32mDownloading from:\e[0m $download_url"
     
     wget -q -O /tmp/gost.tar.gz "$download_url"
     
     if [ $? -ne 0 ] || [ ! -s /tmp/gost.tar.gz ]; then
-        echo -e "\e[33mTrying alternative download pattern...\e[0m"
-        
-        alt_urls=(
-            "https://github.com/go-gost/gost/releases/download/${selected_version}/gost-linux-amd64.tar.gz"
-            "https://github.com/go-gost/gost/releases/download/${selected_version}/gost_${selected_version}_linux_amd64.tar.gz"
-            "https://github.com/go-gost/gost/releases/latest/download/gost_linux_amd64.tar.gz"
-        )
-        
-        for alt_url in "${alt_urls[@]}"; do
-            echo -e "\e[33mTrying:\e[0m $alt_url"
-            wget -q -O /tmp/gost.tar.gz "$alt_url"
-            if [ $? -eq 0 ] && [ -s /tmp/gost.tar.gz ]; then
-                echo -e "\e[32mDownload successful with alternative URL.\e[0m"
-                break
-            fi
-        done
+        echo -e "\e[33mTrying alternative download URL...\e[0m"
+        # Alternative URL
+        download_url="https://github.com/go-gost/gost/releases/download/v3.2.6/gost-linux-amd64.tar.gz"
+        wget -q -O /tmp/gost.tar.gz "$download_url"
     fi
-    
+
     if [ ! -s /tmp/gost.tar.gz ]; then
         echo -e "\e[31mError: Could not download Gost. Please check internet connection.\e[0m"
-        rm -f /tmp/gost_download_url /tmp/gost_selected_version
         return 1
     fi
 
     echo -e "\e[32mExtracting archive...\e[0m"
     
+    # Create temp directory for extraction
     temp_dir=$(mktemp -d)
     tar -xvzf /tmp/gost.tar.gz -C "$temp_dir" 2>/dev/null
     
-    gost_binary=$(find "$temp_dir" -type f -name "gost" -o -name "gost-*" | head -1)
+    # Find the gost binary
+    gost_binary=$(find "$temp_dir" -type f \( -name "gost" -o -name "gost-*" \) | head -1)
     
     if [ -n "$gost_binary" ] && [ -f "$gost_binary" ]; then
         cp "$gost_binary" /usr/local/bin/gost
         chmod +x /usr/local/bin/gost
-        echo -e "\e[32mGost $selected_version installed successfully.\e[0m"
+        echo -e "\e[32mGost 3.2.6 installed successfully.\e[0m"
     else
+        # Try direct extraction
         tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ --strip-components=1 2>/dev/null || \
         tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ 2>/dev/null
         
         if [ -f /usr/local/bin/gost ]; then
             chmod +x /usr/local/bin/gost
-            echo -e "\e[32mGost $selected_version installed successfully.\e[0m"
+            echo -e "\e[32mGost 3.2.6 installed successfully.\e[0m"
         else
-            echo -e "\e[31mError: Could not find or install gost binary.\e[0m"
+            echo -e "\e[31mError: Could not find gost binary in archive.\e[0m"
             rm -rf "$temp_dir"
-            rm -f /tmp/gost.tar.gz /tmp/gost_download_url /tmp/gost_selected_version
+            rm -f /tmp/gost.tar.gz
             return 1
         fi
     fi
     
+    # Cleanup
     rm -rf "$temp_dir"
-    rm -f /tmp/gost.tar.gz /tmp/gost_download_url /tmp/gost_selected_version
+    rm -f /tmp/gost.tar.gz
     
+    # Verify installation
     if command -v gost &>/dev/null; then
         echo -e "\e[32m✓ Gost is ready to use\e[0m"
         return 0
     else
-        echo -e "\e[33m⚠ Gost may not be in PATH. Checking /usr/local/bin/...\e[0m"
+        echo -e "\e[33m⚠ Checking /usr/local/bin/ for gost binary...\e[0m"
         ls -la /usr/local/bin/ | grep -i gost
         return 1
     fi
@@ -168,7 +103,7 @@ install_gost3() {
 install_gost_version() {
     echo -e "\e[32mChoose Gost version:\e[0m"
     echo -e "\e[36m1. \e[0mGost version 2.11.5 (legacy)"
-    echo -e "\e[36m2. \e[0mGost version 3.x (select from recent releases)"
+    echo -e "\e[36m2. \e[0mGost version 3.2.6 (latest)"
     echo ""
 
     read -p "$(echo -e '\e[97mYour choice (1 or 2): \e[0m')" gost_version_choice
@@ -179,13 +114,8 @@ install_gost_version() {
             return $?
             ;;
         2)
-            get_gost3_versions
-            if [ $? -eq 0 ]; then
-                install_gost3
-                return $?
-            else
-                return 1
-            fi
+            install_gost3
+            return $?
             ;;
         *)
             echo -e "\e[31mInvalid choice. Please enter 1 or 2.\e[0m"
@@ -197,9 +127,11 @@ install_gost_version() {
 configure_system() {
     echo -e "\e[32mConfiguring system, please wait...\e[0m"
     
+    # Configure port range
     sysctl net.ipv4.ip_local_port_range="1024 65535" 2>/dev/null
     echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" >> /etc/rc.local 2>/dev/null
     
+    # Create sysctl service
     cat <<EOL > /etc/systemd/system/sysctl-custom.service
 [Unit]
 Description=Custom sysctl settings
@@ -213,8 +145,10 @@ EOL
 
     systemctl enable sysctl-custom >/dev/null 2>&1
     
-    apt update >/dev/null 2>&1 && apt install -y wget nano curl jq >/dev/null 2>&1
+    # Update and install dependencies
+    apt update >/dev/null 2>&1 && apt install -y wget nano curl >/dev/null 2>&1
     
+    # Create alias
     echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
     source ~/.bashrc >/dev/null 2>&1
     
@@ -233,9 +167,11 @@ create_gost_service() {
     file_count=$(( (port_count + max_ports_per_file - 1) / max_ports_per_file ))
 
     for ((file_index = 0; file_index < file_count; file_index++)); do
+        # Create safe service name
         safe_ip=$(echo "$destination_ip" | tr '.:' '_')
         service_name="gost_${safe_ip}_$file_index"
         
+        # Create service file
         cat <<EOL > "/etc/systemd/system/${service_name}.service"
 [Unit]
 Description=GO Simple Tunnel ${file_index} for ${destination_ip}
@@ -247,6 +183,7 @@ Type=simple
 Environment="GOST_LOGGER_LEVEL=fatal"
 EOL
 
+        # Build ExecStart command
         exec_start_command="ExecStart=/usr/local/bin/gost"
         for ((i = file_index * max_ports_per_file; i < (file_index + 1) * max_ports_per_file && i < port_count; i++)); do
             port="${port_array[i]}"
@@ -255,6 +192,7 @@ EOL
 
         echo "$exec_start_command" >> "/etc/systemd/system/${service_name}.service"
 
+        # Add service footer
         cat <<EOL >> "/etc/systemd/system/${service_name}.service"
 Restart=always
 RestartSec=3
@@ -264,6 +202,7 @@ User=root
 WantedBy=multi-user.target
 EOL
 
+        # Enable and start service
         systemctl enable "${service_name}.service" >/dev/null 2>&1
         systemctl start "${service_name}.service" >/dev/null 2>&1
         
@@ -276,6 +215,7 @@ EOL
 }
 
 setup_tunnel() {
+    # First, choose and install Gost version
     install_gost_version
     if [ $? -ne 0 ]; then
         echo -e "\e[33mGost installation failed or was cancelled. Returning to menu...\e[0m"
