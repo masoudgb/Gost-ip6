@@ -15,48 +15,63 @@ show_header() {
     echo "                                              "
     echo -e "\e[0m"
     echo -e "\e[36mCreated By Masoud Gb Special Thanks Hamid Router\e[0m"
-    echo -e "\e[35mGost Ip6 Script v2.5.0\e[0m"
+    echo -e "\e[35mGost Ip6 Script v2.6.0\e[0m"
     echo ""
 }
 
+show_animation() {
+    local text="$1"
+    echo -ne "\e[32m"
+    echo -n "$text "
+    
+    # Simple animation
+    for i in {1..3}; do
+        echo -n "."
+        sleep 0.5
+    done
+    
+    echo -e "\e[0m"
+}
+
 install_gost2() {
-    echo -e "\e[32mInstalling Gost version 2.11.5, please wait...\e[0m"
+    echo -e "\e[32mInstalling Gost version 2.11.5...\e[0m"
+    show_animation "Downloading"
     wget -q https://github.com/ginuerzh/gost/releases/download/v2.11.5/gost-linux-amd64-2.11.5.gz
+    
     if [ $? -eq 0 ]; then
+        show_animation "Extracting"
         gunzip gost-linux-amd64-2.11.5.gz
         mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
         chmod +x /usr/local/bin/gost
-        echo -e "\e[32mGost 2.11.5 installed successfully.\e[0m"
+        echo -e "\e[32m✓ Gost 2.11.5 installed successfully\e[0m"
         return 0
     else
-        echo -e "\e[31mDownload failed. Please check your connection.\e[0m"
+        echo -e "\e[31m✗ Download failed. Please check your connection.\e[0m"
         return 1
     fi
 }
 
 install_gost3() {
-    echo -e "\e[32mInstalling Gost version 3.2.6, please wait...\e[0m"
+    echo -e "\e[32mInstalling Gost version 3.2.6...\e[0m"
     
     # Direct download URL for Gost 3.2.6
     download_url="https://github.com/go-gost/gost/releases/download/v3.2.6/gost_3.2.6_linux_amd64.tar.gz"
     
-    echo -e "\e[32mDownloading from:\e[0m $download_url"
-    
+    show_animation "Downloading"
     wget -q -O /tmp/gost.tar.gz "$download_url"
     
     if [ $? -ne 0 ] || [ ! -s /tmp/gost.tar.gz ]; then
         echo -e "\e[33mTrying alternative download URL...\e[0m"
-        # Alternative URL
         download_url="https://github.com/go-gost/gost/releases/download/v3.2.6/gost-linux-amd64.tar.gz"
         wget -q -O /tmp/gost.tar.gz "$download_url"
     fi
 
     if [ ! -s /tmp/gost.tar.gz ]; then
-        echo -e "\e[31mError: Could not download Gost. Please check internet connection.\e[0m"
+        echo -e "\e[31m✗ Download failed. Please check internet connection.\e[0m"
         return 1
     fi
 
-    echo -e "\e[32mExtracting archive...\e[0m"
+    show_animation "Extracting"
     
     # Create temp directory for extraction
     temp_dir=$(mktemp -d)
@@ -68,7 +83,7 @@ install_gost3() {
     if [ -n "$gost_binary" ] && [ -f "$gost_binary" ]; then
         cp "$gost_binary" /usr/local/bin/gost
         chmod +x /usr/local/bin/gost
-        echo -e "\e[32mGost 3.2.6 installed successfully.\e[0m"
+        echo -e "\e[32m✓ Gost 3.2.6 installed successfully\e[0m"
     else
         # Try direct extraction
         tar -xvzf /tmp/gost.tar.gz -C /usr/local/bin/ --strip-components=1 2>/dev/null || \
@@ -76,9 +91,9 @@ install_gost3() {
         
         if [ -f /usr/local/bin/gost ]; then
             chmod +x /usr/local/bin/gost
-            echo -e "\e[32mGost 3.2.6 installed successfully.\e[0m"
+            echo -e "\e[32m✓ Gost 3.2.6 installed successfully\e[0m"
         else
-            echo -e "\e[31mError: Could not find gost binary in archive.\e[0m"
+            echo -e "\e[31m✗ Could not find gost binary in archive\e[0m"
             rm -rf "$temp_dir"
             rm -f /tmp/gost.tar.gz
             return 1
@@ -95,7 +110,6 @@ install_gost3() {
         return 0
     else
         echo -e "\e[33m⚠ Checking /usr/local/bin/ for gost binary...\e[0m"
-        ls -la /usr/local/bin/ | grep -i gost
         return 1
     fi
 }
@@ -125,34 +139,17 @@ install_gost_version() {
 }
 
 configure_system() {
-    echo -e "\e[32mConfiguring system, please wait...\e[0m"
+    echo -e "\e[32mConfiguring system...\e[0m"
     
-    # Configure port range
-    sysctl net.ipv4.ip_local_port_range="1024 65535" 2>/dev/null
-    echo "sysctl net.ipv4.ip_local_port_range=\"1024 65535\"" >> /etc/rc.local 2>/dev/null
-    
-    # Create sysctl service
-    cat <<EOL > /etc/systemd/system/sysctl-custom.service
-[Unit]
-Description=Custom sysctl settings
-
-[Service]
-ExecStart=/sbin/sysctl net.ipv4.ip_local_port_range="1024 65535"
-
-[Install]
-WantedBy=multi-user.target
-EOL
-
-    systemctl enable sysctl-custom >/dev/null 2>&1
-    
-    # Update and install dependencies
+    # Update and install dependencies only
+    show_animation "Updating packages"
     apt update >/dev/null 2>&1 && apt install -y wget nano curl >/dev/null 2>&1
     
     # Create alias
     echo 'alias gost="bash /etc/gost/install.sh"' >> ~/.bashrc
     source ~/.bashrc >/dev/null 2>&1
     
-    echo -e "\e[32mSystem configuration completed.\e[0m"
+    echo -e "\e[32m✓ System configuration completed\e[0m"
     return 0
 }
 
@@ -174,9 +171,8 @@ create_gost_service() {
         # Create service file
         cat <<EOL > "/etc/systemd/system/${service_name}.service"
 [Unit]
-Description=GO Simple Tunnel ${file_index} for ${destination_ip}
+Description=Gost Tunnel ${file_index} for ${destination_ip}
 After=network.target
-Wants=network.target
 
 [Service]
 Type=simple
@@ -206,7 +202,7 @@ EOL
         systemctl enable "${service_name}.service" >/dev/null 2>&1
         systemctl start "${service_name}.service" >/dev/null 2>&1
         
-        echo -e "\e[32m✓ Service '${service_name}' started successfully\e[0m"
+        echo -e "\e[32m✓ Service '${service_name}' started\e[0m"
     done
 
     systemctl daemon-reload
@@ -234,10 +230,10 @@ setup_tunnel() {
 
     case $tunnel_type in
         1)
-            read -p "$(echo -e '\e[97mPlease enter the destination IPv4: \e[0m')" destination_ip
+            read -p "$(echo -e '\e[97mDestination IPv4: \e[0m')" destination_ip
             ;;
         2)
-            read -p "$(echo -e '\e[97mPlease enter the destination IPv6: \e[0m')" destination_ip
+            read -p "$(echo -e '\e[97mDestination IPv6: \e[0m')" destination_ip
             ;;
         *)
             echo -e "\e[31mInvalid choice.\e[0m"
@@ -245,7 +241,7 @@ setup_tunnel() {
             ;;
     esac
 
-    read -p "$(echo -e '\e[97mPlease enter ports (separated by commas, max 12000 per service): \e[0m')" ports
+    read -p "$(echo -e '\e[97mPorts (separated by commas): \e[0m')" ports
 
     echo -e "\e[32mSelect the protocol:\e[0m"
     echo -e "\e[36m1. \e[0mTCP"
@@ -273,9 +269,9 @@ setup_tunnel() {
     echo "══════════════════════════════════════════════════"
     echo ""
     
-    read -p "$(echo -e '\e[97mProceed with configuration? (y/n): \e[0m')" confirm
+    read -p "$(echo -e '\e[97mProceed? (y/n): \e[0m')" confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo -e "\e[33mConfiguration cancelled.\e[0m"
+        echo -e "\e[33mCancelled.\e[0m"
         return 1
     fi
 
@@ -284,8 +280,8 @@ setup_tunnel() {
     
     echo ""
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32m✓ Tunnel setup completed successfully!\e[0m"
-    echo -e "\e[36mTo check status, go to: System Status in main menu\e[0m"
+    echo -e "\e[32m✓ Tunnel setup completed!\e[0m"
+    echo -e "\e[36mCheck status in System Status menu\e[0m"
     echo "══════════════════════════════════════════════════"
     echo ""
     
@@ -296,48 +292,63 @@ setup_tunnel() {
 show_status() {
     clear
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mSystem Status:\e[0m"
+    echo -e "\e[32mSYSTEM STATUS\e[0m"
     echo "══════════════════════════════════════════════════"
     
+    # Check Gost installation
     if command -v gost &>/dev/null; then
-        echo -e "\e[32m✓ Gost is installed\e[0m"
-        version_output=$(gost -v 2>/dev/null || echo "Unknown version")
-        echo -e "\e[97mVersion:\e[0m $version_output"
+        echo -e "\e[32m✓ Gost Installed\e[0m"
+        
+        # Try to get version
+        version_info=$(gost -v 2>/dev/null)
+        if [ -n "$version_info" ]; then
+            echo -e "\e[97mVersion:\e[0m $version_info"
+        fi
     else
-        echo -e "\e[33m✗ Gost is not installed\e[0m"
+        echo -e "\e[33m✗ Gost Not Installed\e[0m"
     fi
     
     echo ""
-    echo -e "\e[32mActive tunnels:\e[0m"
     
-    running_count=$(systemctl list-units --type=service --state=running "gost_*" 2>/dev/null | grep -c "gost_")
+    # Check active tunnels
+    active_services=$(systemctl list-units --type=service --state=active "gost_*" 2>/dev/null | grep "gost_" | wc -l)
     
-    if [ "$running_count" -gt 0 ]; then
-        systemctl list-units --type=service --state=running "gost_*" --no-pager --full
-        echo ""
-        echo -e "\e[32mTunnel details:\e[0m"
+    if [ "$active_services" -gt 0 ]; then
+        echo -e "\e[32mActive Tunnels: $active_services\e[0m"
+        echo "──────────────────────────────────────"
         
-        for service_file in /etc/systemd/system/gost_*.service; do
-            [ -e "$service_file" ] || continue
-            
-            service_name=$(basename "$service_file" .service)
-            status=$(systemctl is-active "$service_name" 2>/dev/null)
+        # Get list of active gost services
+        systemctl list-units --type=service --state=active "gost_*" 2>/dev/null | grep "gost_" | while read -r line; do
+            service_name=$(echo "$line" | awk '{print $1}')
+            status=$(echo "$line" | awk '{print $3}')
             
             if [ "$status" = "active" ]; then
-                exec_line=$(grep "ExecStart=" "$service_file")
-                ip=$(echo "$exec_line" | grep -oP '\[.*?\]' | tr -d '[]' | head -1)
-                ports=$(echo "$exec_line" | grep -oP ':\K\d+' | tr '\n' ',' | sed 's/,$//')
-                protocol=$(echo "$exec_line" | grep -oP '//:\d+/\K\w+' | head -1)
+                # Extract IP from service name
+                ip=$(echo "$service_name" | sed 's/gost_//' | sed 's/_0\.service//' | tr '_' '.' | sed 's/_\([0-9]\+\)$//')
                 
-                echo -e "\e[97mService:\e[0m $service_name"
-                echo -e "\e[97mIP:\e[0m $ip"
-                echo -e "\e[97mPorts:\e[0m $ports"
-                echo -e "\e[97mProtocol:\e[0m $protocol"
-                echo "──────────────────────────────"
+                # Try to get more info from service file
+                service_file="/etc/systemd/system/${service_name}"
+                if [ -f "$service_file" ]; then
+                    # Get ports
+                    ports_line=$(grep -o ":[0-9]\+/" "$service_file" | tr -d ':/' | tr '\n' ',' | sed 's/,$//')
+                    
+                    # Get protocol
+                    protocol=$(grep -o "tcp\|udp\|grpc" "$service_file" | head -1)
+                    
+                    echo -e "\e[97mService:\e[0m ${service_name%.service}"
+                    echo -e "\e[97mIP:\e[0m $ip"
+                    if [ -n "$ports_line" ]; then
+                        echo -e "\e[97mPorts:\e[0m $ports_line"
+                    fi
+                    if [ -n "$protocol" ]; then
+                        echo -e "\e[97mProtocol:\e[0m $protocol"
+                    fi
+                    echo "──────────────────────────────────────"
+                fi
             fi
         done
     else
-        echo -e "\e[33mNo active Gost tunnels found\e[0m"
+        echo -e "\e[33mNo active tunnels found\e[0m"
     fi
     
     echo ""
@@ -348,14 +359,16 @@ show_status() {
 update_script() {
     echo -e "\e[32mUpdating script...\e[0m"
     mkdir -p /etc/gost
+    show_animation "Downloading"
+    
     if wget -O /etc/gost/install.sh https://raw.githubusercontent.com/masoudgb/Gost-ip6/main/install.sh; then
         chmod +x /etc/gost/install.sh
-        echo -e "\e[32m✓ Update completed successfully\e[0m"
-        echo -e "\e[36mRestarting script with new version...\e[0m"
+        echo -e "\e[32m✓ Update completed\e[0m"
+        echo -e "\e[36mRestarting with new version...\e[0m"
         sleep 2
         exec bash /etc/gost/install.sh
     else
-        echo -e "\e[31m✗ Update failed. Please check network connection.\e[0m"
+        echo -e "\e[31m✗ Update failed. Check network connection.\e[0m"
         sleep 2
     fi
 }
@@ -363,13 +376,13 @@ update_script() {
 add_new_ip() {
     clear
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mAdd New Tunnel Configuration\e[0m"
+    echo -e "\e[32mADD NEW TUNNEL\e[0m"
     echo "══════════════════════════════════════════════════"
     
-    read -p "$(echo -e '\e[97mPlease enter the new destination IP: \e[0m')" destination_ip
-    read -p "$(echo -e '\e[97mPlease enter ports (separated by commas): \e[0m')" ports
+    read -p "$(echo -e '\e[97mDestination IP: \e[0m')" destination_ip
+    read -p "$(echo -e '\e[97mPorts (separated by commas): \e[0m')" ports
     
-    echo -e "\e[32mSelect the protocol:\e[0m"
+    echo -e "\e[32mSelect protocol:\e[0m"
     echo -e "\e[36m1. \e[0mTCP"
     echo -e "\e[36m2. \e[0mgRPC"
     echo -e "\e[36m3. \e[0mUDP"
@@ -394,10 +407,9 @@ add_new_ip() {
 auto_restart() {
     clear
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mAuto Restart Configuration\e[0m"
+    echo -e "\e[32mAUTO RESTART\e[0m"
     echo "══════════════════════════════════════════════════"
     
-    echo -e "\e[32mAuto Restart options:\e[0m"
     echo -e "\e[36m1. \e[0mEnable"
     echo -e "\e[36m2. \e[0mDisable"
     
@@ -405,9 +417,9 @@ auto_restart() {
 
     case $choice in
         1)
-            read -p "$(echo -e '\e[97mEnter restart interval in hours (1-24): \e[0m')" interval
+            read -p "$(echo -e '\e[97mInterval in hours (1-24): \e[0m')" interval
             if ! [[ "$interval" =~ ^[0-9]+$ ]] || [ "$interval" -lt 1 ] || [ "$interval" -gt 24 ]; then
-                echo -e "\e[31mInvalid interval. Must be between 1 and 24 hours.\e[0m"
+                echo -e "\e[31mInvalid interval\e[0m"
                 return
             fi
             
@@ -427,7 +439,7 @@ EOL
             echo -e "\e[32m✓ Auto restart disabled\e[0m"
             ;;
         *)
-            echo -e "\e[31mInvalid choice.\e[0m"
+            echo -e "\e[31mInvalid choice\e[0m"
             ;;
     esac
     
@@ -437,10 +449,9 @@ EOL
 auto_clear_cache() {
     clear
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mAuto Clear Cache Configuration\e[0m"
+    echo -e "\e[32mAUTO CLEAR CACHE\e[0m"
     echo "══════════════════════════════════════════════════"
     
-    echo -e "\e[32mAuto Clear Cache options:\e[0m"
     echo -e "\e[36m1. \e[0mEnable"
     echo -e "\e[36m2. \e[0mDisable"
     
@@ -448,9 +459,9 @@ auto_clear_cache() {
 
     case $choice in
         1)
-            read -p "$(echo -e '\e[97mEnter interval in days (1-30): \e[0m')" interval
+            read -p "$(echo -e '\e[97mInterval in days (1-30): \e[0m')" interval
             if ! [[ "$interval" =~ ^[0-9]+$ ]] || [ "$interval" -lt 1 ] || [ "$interval" -gt 30 ]; then
-                echo -e "\e[31mInvalid interval. Must be between 1 and 30 days.\e[0m"
+                echo -e "\e[31mInvalid interval\e[0m"
                 return
             fi
             
@@ -462,7 +473,7 @@ auto_clear_cache() {
             echo -e "\e[32m✓ Auto clear cache disabled\e[0m"
             ;;
         *)
-            echo -e "\e[31mInvalid choice.\e[0m"
+            echo -e "\e[31mInvalid choice\e[0m"
             ;;
     esac
     
@@ -472,7 +483,7 @@ auto_clear_cache() {
 install_bbr() {
     clear
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32mInstalling BBR...\e[0m"
+    echo -e "\e[32mINSTALLING BBR\e[0m"
     echo "══════════════════════════════════════════════════"
     
     wget -N --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh
@@ -487,52 +498,38 @@ uninstall() {
     echo -e "\e[91m╔══════════════════════════════════════════════════════════╗"
     echo -e "\e[91m║                    WARNING: UNINSTALL                    ║"
     echo -e "\e[91m╚══════════════════════════════════════════════════════════╝"
-    echo -e "\e[33mThis will completely remove Gost and all tunnel configurations.\e[0m"
-    echo -e "\e[33mAll active tunnels will be stopped and removed.\e[0m"
+    echo -e "\e[33mThis will remove Gost and all tunnel configurations.\e[0m"
     echo ""
     
-    read -p "$(echo -e '\e[97mAre you absolutely sure? (type YES to confirm): \e[0m')" confirm
+    read -p "$(echo -e '\e[97mAre you sure? (type YES to confirm): \e[0m')" confirm
     
     if [ "$confirm" != "YES" ]; then
-        echo -e "\e[32mUninstall cancelled.\e[0m"
+        echo -e "\e[32mCancelled\e[0m"
         sleep 2
         return
     fi
     
-    echo -e "\e[33mStarting uninstall in 5 seconds...\e[0m"
-    for i in 5 4 3 2 1; do
+    echo -e "\e[33mUninstalling in 3 seconds...\e[0m"
+    for i in 3 2 1; do
         echo -e "\e[33m${i}...\e[0m"
         sleep 1
     done
     
-    echo -e "\e[32mStopping all Gost services...\e[0m"
+    echo -e "\e[32mStopping services...\e[0m"
     systemctl daemon-reload
     systemctl stop gost_*.service 2>/dev/null
     systemctl disable gost_*.service 2>/dev/null
     
-    echo -e "\e[32mRemoving service files...\e[0m"
+    echo -e "\e[32mRemoving files...\e[0m"
     rm -f /etc/systemd/system/gost_*.service
-    rm -f /etc/systemd/system/multi-user.target.wants/gost_*.service
-    
-    echo -e "\e[32mRemoving Gost binary...\e[0m"
     rm -f /usr/local/bin/gost
-    
-    echo -e "\e[32mCleaning up configuration...\e[0m"
     rm -rf /etc/gost 2>/dev/null
-    
-    systemctl stop sysctl-custom 2>/dev/null
-    systemctl disable sysctl-custom 2>/dev/null
-    rm -f /etc/systemd/system/sysctl-custom.service
-    systemctl daemon-reload
     
     rm -f /usr/bin/auto_restart_gost.sh 2>/dev/null
     crontab -l 2>/dev/null | grep -v "gost\|drop_caches" | crontab -
     
-    echo -e "\e[32mCleaning up temporary files...\e[0m"
-    rm -f /tmp/gost_* 2>/dev/null
-    
     echo "══════════════════════════════════════════════════"
-    echo -e "\e[32m✓ Gost has been completely uninstalled\e[0m"
+    echo -e "\e[32m✓ Gost uninstalled successfully\e[0m"
     echo "══════════════════════════════════════════════════"
     
     read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
@@ -542,13 +539,13 @@ config_menu() {
     while true; do
         clear
         echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mConfiguration Menu\e[0m"
+        echo -e "\e[32mCONFIGURATION\e[0m"
         echo "══════════════════════════════════════════════════"
-        echo -e "\e[36m1. \e[0mAdd New IP"
+        echo -e "\e[36m1. \e[0mAdd New Tunnel"
         echo -e "\e[36m2. \e[0mChange Gost Version"
         echo -e "\e[36m3. \e[0mAuto Restart"
         echo -e "\e[36m4. \e[0mAuto Clear Cache"
-        echo -e "\e[36m5. \e[0mBack to Main Menu"
+        echo -e "\e[36m5. \e[0mBack"
         echo "══════════════════════════════════════════════════"
         
         read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
@@ -560,7 +557,7 @@ config_menu() {
             2) 
                 install_gost_version
                 if [ $? -eq 0 ]; then
-                    echo -e "\e[32m✓ Gost version changed successfully\e[0m"
+                    echo -e "\e[32m✓ Version changed\e[0m"
                 fi
                 read -n 1 -s -r -p "$(echo -e '\e[36mPress any key to continue...\e[0m')"
                 ;;
@@ -574,7 +571,7 @@ config_menu() {
                 return
                 ;;
             *)
-                echo -e "\e[31mInvalid choice.\e[0m"
+                echo -e "\e[31mInvalid choice\e[0m"
                 sleep 1
                 ;;
         esac
@@ -585,12 +582,12 @@ tools_menu() {
     while true; do
         clear
         echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mTools Menu\e[0m"
+        echo -e "\e[32mTOOLS\e[0m"
         echo "══════════════════════════════════════════════════"
         echo -e "\e[36m1. \e[0mUpdate Script"
         echo -e "\e[36m2. \e[0mInstall BBR"
         echo -e "\e[36m3. \e[0mUninstall"
-        echo -e "\e[36m4. \e[0mBack to Main Menu"
+        echo -e "\e[36m4. \e[0mBack"
         echo "══════════════════════════════════════════════════"
         
         read -p "$(echo -e '\e[97mYour choice: \e[0m')" choice
@@ -609,7 +606,7 @@ tools_menu() {
                 return
                 ;;
             *)
-                echo -e "\e[31mInvalid choice.\e[0m"
+                echo -e "\e[31mInvalid choice\e[0m"
                 sleep 1
                 ;;
         esac
@@ -622,7 +619,7 @@ main_menu() {
         show_header
         
         echo "══════════════════════════════════════════════════"
-        echo -e "\e[32mMain Menu:\e[0m"
+        echo -e "\e[32mMAIN MENU\e[0m"
         echo -e "\e[36m1. \e[0mSetup Tunnel"
         echo -e "\e[36m2. \e[0mSystem Status"
         echo -e "\e[36m3. \e[0mConfiguration"
@@ -650,7 +647,7 @@ main_menu() {
                 exit 0
                 ;;
             *)
-                echo -e "\e[31mInvalid choice.\e[0m"
+                echo -e "\e[31mInvalid choice\e[0m"
                 sleep 1
                 ;;
         esac
