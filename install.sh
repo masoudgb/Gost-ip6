@@ -312,9 +312,9 @@ setup_tunnel() {
     echo ""
     
     read -p "$(echo -e '\e[97mProceed? (y/n): \e[0m')" confirm
-    if [[ "$confirm" != "y" && "$confirm" != "Y" ]; then
-        echo -e "\e[33mCancelled.\e[0m"
-        return 1
+    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+    echo -e "\e[33mCancelled.\e[0m"
+    return 1
     fi
 
     configure_system
